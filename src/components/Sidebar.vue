@@ -8,7 +8,8 @@
       <li><router-link to="/agenda/tasks"><i class="fas fa-check"></i> Tareas y Eventos</router-link></li>
       <li><router-link to="/agenda/notifications"><i class="fas fa-bell"></i> Notificaciones</router-link></li>
       <li><router-link to="/agenda/ai-assistant"><i class="fas fa-robot"></i> Asistente IA</router-link></li>
-      <li><router-link to="/"><i class="fas fa-cog"></i> Configuración</router-link></li>
+      <li><router-link to="/support"><i class="fas fa-life-ring"></i> Comunitat i Suport</router-link></li>
+      <li><router-link to="/contact"><i class="fas fa-envelope"></i> Contacte</router-link></li>
     </ul>
   </nav>
 </template>
