@@ -1,31 +1,31 @@
 <!-- src/components/TaskForm.vue -->
 <template>
   <form @submit.prevent="submitTask" class="card">
-    <h2>Nueva Tarea</h2>
-    <label>Título</label>
+    <h2>Nova Tasca</h2>
+    <label>Títul</label>
     <input v-model="task.title" required />
-    <label>Fecha</label>
+    <label>Data</label>
     <input v-model="task.due" type="date" required />
-    <label>Prioridad</label>
+    <label>Prioritat</label>
     <select v-model="task.priority" required>
       <option>Alta</option>
-      <option>Media</option>
-      <option>Baja</option>
+      <option>Mitja</option>
+      <option>Baixa</option>
     </select>
     <label>
       <input type="checkbox" v-model="task.needsPreparation" />
-      Requiere preparación
+      Requiereix preparació
     </label>
     <div v-if="task.needsPreparation" class="slide-in">
-      <label>Horas de preparación</label>
+      <label>Hores de preparació</label>
       <input v-model="task.preparation" type="number" min="1" />
     </div>
     <label>
       <input type="checkbox" v-model="task.notify" />
-      Notificación
+      Notificació
     </label>
     <div v-if="task.notify" class="slide-in">
-      <label>Horas antes</label>
+      <label>Hores abans</label>
       <select v-model="task.notifyHours">
         <option>4</option>
         <option>24</option>
@@ -44,7 +44,7 @@ export default {
       task: {
         title: '',
         due: '',
-        priority: 'Media',
+        priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
         notify: false,
@@ -61,7 +61,7 @@ export default {
       this.task = {
         title: '',
         due: '',
-        priority: 'Media',
+        priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
         notify: false,

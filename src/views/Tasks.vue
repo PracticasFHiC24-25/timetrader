@@ -1,13 +1,13 @@
 <!-- src/views/Tasks.vue -->
 <template>
   <div class="tasks container">
-    <h1>Tareas y Eventos</h1>
+    <h1>Tasques i Events</h1>
     <TaskForm @submit="addTask" @cancel="cancelTask" />
     <div>
-      <label>Ordenar por:</label>
+      <label>Ordenar per:</label>
       <select v-model="sortBy" @change="sortTasks">
-        <option value="priority">Prioridad</option>
-        <option value="due">Fecha</option>
+        <option value="priority">Prioritat</option>
+        <option value="due">Data</option>
       </select>
     </div>
     <div class="task-list row">
@@ -27,8 +27,8 @@ export default {
   data() {
     return {
       tasks: [
-        { id: 1, title: 'Estudiar para examen', priority: 'Alta', due: '2025-04-20', completed: false },
-        { id: 2, title: 'Entrega proyecto', priority: 'Media', due: '2025-04-22', completed: false },
+        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-04-20', completed: false },
+        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-04-22', completed: false },
       ],
       sortBy: 'priority',
     };
@@ -37,7 +37,7 @@ export default {
     sortedTasks() {
       const tasks = [...this.tasks];
       if (this.sortBy === 'priority') {
-        const priorityOrder = { 'Alta': 1, 'Media': 2, 'Baja': 3 };
+        const priorityOrder = { 'Alta': 1, 'Mitja': 2, 'Baixa': 3 };
         return tasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
       }
       return tasks.sort((a, b) => new Date(a.due) - new Date(b.due));
@@ -52,7 +52,7 @@ export default {
       task.completed = true;
     },
     editTask(id) {
-      alert(`Editar tarea ${id} (implementar formulario de edición)`);
+      alert(`Editar tasca ${id} (implementar formulario de edición)`);
     },
     cancelTask() {
       this.$router.push('/agenda');

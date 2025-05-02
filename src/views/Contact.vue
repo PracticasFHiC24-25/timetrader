@@ -2,7 +2,7 @@
 <template>
     <div class="terms-page">
       <main class="main-content">
-        <h1>Termes i Condicions</h1>
+        <h1>Contàcte</h1>
         <p>Aquesta secció està en desenvolupament. Consulta els nostres termes i condicions aviat.</p>
       </main>
     </div>

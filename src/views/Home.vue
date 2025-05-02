@@ -6,12 +6,12 @@
       <!-- Capçalera amb el logo i el títol -->
       <header class="header animate__animated animate__fadeInDown">
         <img src="@/assets/logo.png" alt="TimeTrader Logo" class="logo" />
-        <h1 class="site-title">TimeTrader</h1>
+        <h1 class="site-title">Time-Trader</h1>
       </header>
 
       <!-- Barra de navegació -->
       <nav class="nav-tabs animate__animated animate__fadeIn">
-        <router-link to="/agenda/tasks" class="nav-tab">La Meva Agenda Intel·ligent</router-link>
+        <router-link to="/agenda/tasks" class="nav-tab">La Meva Agenda</router-link>
         <router-link to="/smart-planning" class="nav-tab">Planificació Intel·ligent</router-link>
         <router-link to="/project-management" class="nav-tab">Gestió de Projectes</router-link>
         <router-link to="/settings" class="nav-tab">Configuració i Personalització</router-link>

@@ -1,19 +1,19 @@
 <!-- src/components/NotificationForm.vue -->
 <template>
   <div class="card">
-    <h2>Configurar Notificación</h2>
-    <label>Tarea</label>
+    <h2>Configurar Notificació</h2>
+    <label>Tasca</label>
     <select v-model="notification.taskId">
       <option v-for="task in tasks" :key="task.id" :value="task.id">{{ task.title }}</option>
     </select>
-    <label>Horas antes</label>
+    <label>Hores abans</label>
     <select v-model="notification.hours">
       <option>4</option>
       <option>24</option>
       <option>48</option>
     </select>
     <button @click="saveNotification">Guardar</button>
-    <button @click="testNotification">Probar Notificación</button>
+    <button @click="testNotification">Probar Notificació</button>
   </div>
 </template>
 
@@ -27,11 +27,11 @@ export default {
   },
   methods: {
     saveNotification() {
-      alert(`Notificación guardada para ${this.taskTitle} ${this.notification.hours}h antes`);
+      alert(`Notificació guardada per ${this.taskTitle} ${this.notification.hours}h abans`);
       this.$emit('save', { ...this.notification });
     },
     testNotification() {
-      alert('Notificación de prueba enviada');
+      alert('Notificació de proba enviada');
     },
     taskTitle() {
       const task = this.tasks.find(t => t.id === this.notification.taskId);

@@ -2,9 +2,9 @@
 <template>
   <div class="card task-card">
     <h3>{{ task.title }}</h3>
-    <p>Prioridad: <span :style="{ color: priorityColor }">{{ task.priority }}</span></p>
-    <p>Fecha: {{ task.due }}</p>
-    <p v-if="task.preparation">Preparación: {{ task.preparation }} horas</p>
+    <p>Prioritat: <span :style="{ color: priorityColor }">{{ task.priority }}</span></p>
+    <p>Data: {{ task.due }}</p>
+    <p v-if="task.preparation">Preparació: {{ task.preparation }} horas</p>
     <button @click="$emit('complete', task.id)" :disabled="task.completed">
       {{ task.completed ? 'Completada' : 'Completar' }}
     </button>
@@ -20,7 +20,7 @@ export default {
   computed: {
     priorityColor() {
       return this.task.priority === 'Alta' ? 'var(--accent-red)' :
-             this.task.priority === 'Media' ? '#FFC107' : 'var(--accent-green)';
+              this.task.priority === 'Mitja' ? '#FFC107' : 'var(--accent-green)';
     },
   },
 };
