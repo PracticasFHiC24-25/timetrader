@@ -2,30 +2,48 @@
 <template>
   <div class="home-page">
     <!-- Contingut principal -->
-    <main class="main-content">
-      <!-- Capçalera amb el logo i el títol -->
-      <header class="header animate__animated animate__fadeInDown">
-        <img src="@/assets/logo.png" alt="TimeTrader Logo" class="logo" />
+    <main class="main-content" role="main">
+      <!-- Capçalera amb el logo i el títol (punt 3: accessibilitat) -->
+      <header class="header animate_animated animate_fadeInDown" role="banner">
+        <img
+          src="@/assets/logo.png"
+          alt="TimeTrader Logo"
+          class="logo"
+        />
         <h1 class="site-title">Time-Trader</h1>
       </header>
 
-      <!-- Barra de navegació -->
-      <nav class="nav-tabs animate__animated animate__fadeIn">
-        <router-link to="/agenda/tasks" class="nav-tab">La Meva Agenda</router-link>
-        <router-link to="/smart-planning" class="nav-tab">Planificació Intel·ligent</router-link>
-        <router-link to="/project-management" class="nav-tab">Gestió de Projectes</router-link>
-        <router-link to="/settings" class="nav-tab">Configuració i Personalització</router-link>
-        <router-link to="/community" class="nav-tab">Comunitat i Col·laboració</router-link>
-        <router-link to="/support" class="nav-tab">Suport i Contacte</router-link>
+      <!-- Barra de navegació (punt 3: accessibilitat) -->
+      <nav
+        class="nav-tabs animate_animated animate_fadeIn"
+        role="navigation"
+        aria-label="Menú principal"
+      >
+        <ul role="menubar" class="nav-list">
+          <li v-for="(tab, idx) in navTabs" :key="idx" role="none">
+            <router-link
+              :to="tab.to"
+              class="nav-tab"
+              role="menuitem"
+              :aria-current="$route.path === tab.to ? 'page' : undefined"
+              tabindex="0"
+            >
+              {{ tab.label }}
+            </router-link>
+          </li>
+        </ul>
       </nav>
 
       <!-- Secció del lema -->
-      <section class="slogan-section animate__animated animate__fadeIn">
+      <section class="slogan-section animate_animated animate_fadeIn">
         <h2>Organitza el teu temps, simplifica la teva vida!</h2>
       </section>
 
-      <!-- Secció del calendari -->
-      <section class="calendar-section animate__animated animate__fadeInUp">
+      <!-- Secció del calendari (punt 3: accessibilitat) -->
+      <section
+        class="calendar-section animate_animated animate_fadeInUp"
+        aria-labelledby="calendar-title"
+      >
         <div class="calendar-wrapper">
           <div class="calendar-controls">
             <button
@@ -36,7 +54,9 @@
             >
               <i class="fas fa-chevron-left"></i>
             </button>
-            <h3 class="calendar-title">{{ monthName }} {{ year }}</h3>
+            <h3 id="calendar-title" class="calendar-title">
+              {{ monthName }} {{ year }}
+            </h3>
             <button
               @click="nextMonth"
               @keypress.enter="nextMonth"
@@ -46,55 +66,66 @@
               <i class="fas fa-chevron-right"></i>
             </button>
           </div>
-          <div class="calendar">
-            <div class="calendar-header">
-              <div v-for="day in ['Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte', 'Diumenge']" :key="day" class="header-day">
+          <div class="calendar" role="grid" aria-readonly="true">
+            <div class="calendar-header" role="row">
+              <div
+                v-for="day in weekDays"
+                :key="day"
+                class="header-day"
+                role="columnheader"
+              >
                 {{ day }}
               </div>
             </div>
-            <transition name="fade">
-              <div :key="`${selectedYear}-${selectedMonth}`" class="calendar-body">
-                <!-- Espais buits abans de l'1 -->
-                <div
-                  v-for="n in firstDayOffset"
-                  :key="'empty-' + n"
-                  class="calendar-day empty"
-                ></div>
-                <!-- Dies del mes -->
-                <div
-                  v-for="day in daysInMonth"
-                  :key="day"
-                  :class="[
-                    'calendar-day',
-                    { 'current-day': isCurrentDay(day) },
-                    { 'event-day': hasEvent(day) }
-                  ]"
-                  @click="selectDay(day)"
-                  @keypress.enter="selectDay(day)"
-                  role="button"
-                  tabindex="0"
-                  :aria-label="`Dia ${day} de ${monthName}`"
-                >
-                  <span class="day-number">{{ day }}</span>
-                  <span v-if="hasEvent(day)" class="event-indicator"></span>
-                </div>
+            <transition-group
+              name="day-fade"
+              tag="div"
+              class="calendar-body"
+              role="rowgroup"
+            >
+              <!-- Espais buits abans de l'1 -->
+              <div
+                v-for="n in firstDayOffset"
+                :key="'empty-' + n"
+                class="calendar-day empty"
+                role="gridcell"
+                aria-hidden="true"
+              ></div>
+              <!-- Dies del mes amb accessibilitat -->
+              <div
+                v-for="day in daysInMonth"
+                :key="day"
+                class="calendar-day"
+                :class="{ 'current-day': isCurrentDay(day), 'event-day': hasEvent(day) }"
+                role="gridcell"
+                tabindex="0"
+                :aria-selected="isCurrentDay(day) ? 'true' : 'false'"
+                :aria-label="'Dia ' + day + ' de ' + monthName"
+                @click="selectDay(day)"
+                @keypress.enter="selectDay(day)"
+              >
+                <span class="day-number">{{ day }}</span>
+                <span
+                  v-if="hasEvent(day)"
+                  class="event-indicator"
+                  aria-hidden="true"
+                ></span>
               </div>
-            </transition>
+            </transition-group>
           </div>
         </div>
       </section>
 
-      <!-- Footer -->
-      <footer class="footer animate__animated animate__fadeIn">
-        <router-link to="/terms">Termes i Condicions</router-link>
-        <router-link to="/support">Suport</router-link>
-        <router-link to="/faq">Preguntes Freqüents</router-link>
-        <!--
-        <a href="https://instagram.com/timetrader" target="_blank">
-          <i class="fab fa-instagram"></i> @timetrader
-        </a>
-      -->
-        <a href="mailto:timetrader@gmail.com">
+      <!-- Footer (punt 3: accessibilitat) -->
+      <footer class="footer animate_animated animate_fadeIn" role="contentinfo">
+        <router-link to="/terms" role="link">Termes i Condicions</router-link>
+        <router-link to="/support" role="link">Suport</router-link>
+        <router-link to="/faq" role="link">Preguntes Freqüents</router-link>
+        <a
+          href="mailto:timetrader@gmail.com"
+          role="link"
+          aria-label="Enviar correu electrònic a timetrader@gmail.com"
+        >
           <i class="fas fa-envelope"></i> timetrader@gmail.com
         </a>
       </footer>
@@ -106,64 +137,84 @@
 export default {
   name: 'HomePage',
   data() {
-    const today = new Date(); // Data actual (24 d'abril de 2025)
+    const today = new Date();
     return {
       currentDate: today,
-      selectedMonth: today.getMonth(), // Mes actual (0-11)
-      selectedYear: today.getFullYear(), // Any actual
+      selectedMonth: today.getMonth(),
+      selectedYear: today.getFullYear(),
+      navTabs: [
+        { label: 'La Meva Agenda', to: '/agenda/tasks' },
+        { label: 'Planificació Intel·ligent', to: '/smart-planning' },
+        { label: 'Gestió de Projectes', to: '/project-management' },
+        { label: 'Configuració i Personalització', to: '/settings' },
+        { label: 'Comunitat i Col·laboració', to: '/community' },
+        { label: 'Suport i Contacte', to: '/support' }
+      ],
+      weekDays: ['Dilluns','Dimarts','Dimecres','Dijous','Divendres','Dissabte','Diumenge']
     };
   },
   computed: {
     monthName() {
-      const months = [
-        'Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny',
-        'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'
-      ];
+      const months = ['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
       return months[this.selectedMonth];
     },
     year() {
       return this.selectedYear;
     },
     firstDayOffset() {
-      const firstDay = new Date(this.selectedYear, this.selectedMonth, 1).getDay();
-      return (firstDay + 6) % 7; // Dilluns = 0, Diumenge = 6
+      const first = new Date(this.selectedYear, this.selectedMonth, 1).getDay();
+      return (first + 6) % 7;
     },
     daysInMonth() {
       return new Date(this.selectedYear, this.selectedMonth + 1, 0).getDate();
-    },
+    }
   },
   methods: {
     previousMonth() {
       if (this.selectedMonth === 0) {
         this.selectedMonth = 11;
         this.selectedYear--;
-      } else {
-        this.selectedMonth--;
-      }
+      } else this.selectedMonth--;
     },
     nextMonth() {
       if (this.selectedMonth === 11) {
         this.selectedMonth = 0;
         this.selectedYear++;
-      } else {
-        this.selectedMonth++;
-      }
+      } else this.selectedMonth++;
     },
     isCurrentDay(day) {
-      const today = this.currentDate;
-      return (
-        day === today.getDate() &&
-        this.selectedMonth === today.getMonth() &&
-        this.selectedYear === today.getFullYear()
-      );
+      const t = this.currentDate;
+      return day === t.getDate() && this.selectedMonth === t.getMonth() && this.selectedYear === t.getFullYear();
     },
     hasEvent(day) {
-      const events = [6, 12, 24]; // Esdeveniments simulats
+      const events = [6,12,24];
       return events.includes(day) && this.selectedMonth === this.currentDate.getMonth();
     },
     selectDay(day) {
-      console.log(`Dia seleccionat: ${day} de ${this.monthName} ${this.year}`);
-    },
-  },
+      console.log(`Dia seleccionat: ${day}`);
+    }
+  }
 };
 </script>
+
+<style scoped>
+/* Escalament de tots els botons i enllaços de menú al hover */
+.nav-tab,
+button {
+  display: inline-block;
+  transition: transform 0.1s ease;
+}
+.nav-tab:hover,
+button:hover {
+  transform: scale(1.1);
+}
+
+/* Nav: mostrar en horitzontal sense punts de llista */
+.nav-list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: var(--space-md);
+}
+</style>
