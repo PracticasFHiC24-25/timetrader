@@ -1,14 +1,16 @@
-<!-- src/components/AIChat.vue -->
 <template>
   <div class="card chat">
-    <h2>Asistent IA</h2>
     <div class="chat-history">
-      <p v-for="(message, index) in messages" :key="index" :class="{ 'user': message.isUser }">
-        {{ message.text }}
-      </p>
+      <div v-for="(message, index) in messages" :key="index" class="message" :class="{ 'user': message.isUser }">
+        <div class="message-content">
+          <p>{{ message.text }}</p>
+        </div>
+      </div>
     </div>
-    <input v-model="input" @keyup.enter="sendMessage" placeholder="Escriu la teva consulta..." />
-    <button @click="sendMessage">Enviar</button>
+    <div class="input-group mt-3">
+      <input v-model="input" @keyup.enter="sendMessage" type="text" class="form-control border-secondary" placeholder="Escriu la teva consulta..." />
+      <button @click="sendMessage" class="btn btn-primary ms-2">Enviar</button>
+    </div>
   </div>
 </template>
 
@@ -24,11 +26,14 @@ export default {
   },
   methods: {
     sendMessage() {
-      if (!this.input) return;
-      this.messages.push({ text: this.input, isUser: true });
-      const response = this.generateResponse(this.input);
+      if (!this.input.trim()) return;
+      this.messages.push({ text: this.input.trim(), isUser: true });
+      const response = this.generateResponse(this.input.trim());
       this.messages.push({ text: response, isUser: false });
       this.input = '';
+      this.$nextTick(() => {
+        this.$el.querySelector('.chat-history').scrollTop = this.$el.querySelector('.chat-history').scrollHeight;
+      });
     },
     generateResponse(input) {
       if (input.includes('planifiquis') || input.includes('horari')) {
@@ -38,16 +43,61 @@ export default {
       } else if (input.includes('confirmes') || input.includes('implementa')) {
         return 'Horario implementado en tu calendario.';
       }
-      return 'Siusplau, especifica la teva consulta (por exemple, "Planifica la meva semana").';
+      return 'Siusplau, especifica la teva consulta (per exemple, "Planifica la meva setmana").';
     },
   },
 };
 </script>
 
 <style scoped>
-.chat { padding: 16px; max-height: 400px; overflow-y: auto; }
-.chat-history { margin-bottom: 16px; }
-.chat-history p { margin: 8px; padding: 8px; border-radius: 4px; }
-.chat-history .user { background: var(--secondary); text-align: right; }
-input { width: 100%; padding: 8px; }
+.chat {
+  padding: 20px;
+  max-height: 500px;
+  overflow-y: auto;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 10px;
+}
+
+.chat-history {
+  margin-bottom: 16px;
+}
+
+.message {
+  display: flex;
+  margin: 8px 0;
+}
+
+.message-content {
+  padding: 10px 15px;
+  border-radius: 8px;
+  max-width: 70%;
+}
+
+.user .message-content {
+  background-color: #e9ecef;
+  color: #2c3e50;
+  text-align: right;
+  margin-left: auto;
+}
+
+.message-content p {
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+}
+
+input {
+  flex: 1;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+button {
+  border-radius: 20px;
+  padding: 10px 20px;
+}
 </style>
