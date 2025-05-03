@@ -6,10 +6,10 @@
     </button>
     <ul>
       <li><router-link to="/agenda/tasks"><i class="fas fa-check"></i> Tasques i Events</router-link></li>
-      <li><router-link to="/agenda/notifications"><i class="fas fa-bell"></i> Notificacion</router-link></li>
-      <li><router-link to="/agenda/ai-assistant"><i class="fas fa-robot"></i> Asistente IA</router-link></li>
-      <li><router-link to="/support"><i class="fas fa-life-ring"></i> Comunitat i Suport</router-link></li>
-      <li><router-link to="/contact"><i class="fas fa-envelope"></i> Contàcte</router-link></li>
+      <li><router-link to="/agenda/notifications"><i class="fas fa-bell"></i> Notificacio</router-link></li>
+      <li><router-link to="/agenda/ai-assistant"><i class="fas fa-robot"></i> Asistent IA</router-link></li>
+      <li><router-link to="/community"><i class="fas fa-life-ring"></i> Comunitat</router-link></li>
+      <li><router-link to="/support"><i class="fas fa-envelope"></i> Suport i Contacte</router-link></li>
     </ul>
   </nav>
 </template>

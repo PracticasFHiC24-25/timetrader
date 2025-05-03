@@ -6,13 +6,13 @@ import Tasks from '../views/Tasks.vue';
 import Notifications from '../views/Notifications.vue';
 import AIAssistant from '../views/AIAssistant.vue';
 import Support from '../views/Support.vue';
-import Contact from '../views/Contact.vue';
 import Terms from '../views/Terms.vue';
 import FAQ from '../views/FAQ.vue';
 import SmartPlanning from '../views/SmartPlanning.vue';
 import ProjectManagement from '../views/ProjectManagement.vue';
 import Settings from '../views/Settings.vue';
 import Community from '../views/Community.vue';
+import Calendari from '@/views/Calendari.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -20,6 +20,7 @@ const routes = [
     path: '/agenda', 
     component: Agenda, 
     children: [
+      { path: 'calendari', component: Calendari },
       { path: 'tasks', component: Tasks },
       { path: 'notifications', component: Notifications },
       { path: 'ai-assistant', component: AIAssistant },
@@ -30,7 +31,6 @@ const routes = [
   { path: '/settings', component: Settings },
   { path: '/community', component: Community },
   { path: '/support', component: Support },
-  { path: '/contact', component: Contact },
   { path: '/terms', component: Terms },
   { path: '/faq', component: FAQ },
 ];

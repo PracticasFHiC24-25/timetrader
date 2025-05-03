@@ -143,7 +143,7 @@ export default {
       selectedMonth: today.getMonth(),
       selectedYear: today.getFullYear(),
       navTabs: [
-        { label: 'La Meva Agenda', to: '/agenda/tasks' },
+        { label: 'La Meva Agenda', to: '/agenda/calendari' },
         { label: 'Planificació Intel·ligent', to: '/smart-planning' },
         { label: 'Gestió de Projectes', to: '/project-management' },
         { label: 'Configuració i Personalització', to: '/settings' },

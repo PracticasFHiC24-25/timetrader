@@ -1,7 +1,7 @@
 <!-- src/views/AIAssistant.vue -->
 <template>
   <div class="ai-assistant container">
-    <h1>Asistente IA</h1>
+    <h1>Asistent IA</h1>
     <AIChat />
   </div>
 </template>
