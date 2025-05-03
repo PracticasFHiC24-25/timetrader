@@ -1,4 +1,3 @@
-<!-- src/views/Calendari.vue -->
 <template>
   <div class="calendari-page">
     <main class="main-content">
@@ -98,7 +97,7 @@ export default {
       }
     },
     onDayClick(day) {
-      this.$router.push('/support');
+      this.$router.push('/agenda/tasks');
     },
     checkScreenSize() {
       this.useShortDays = window.innerWidth < 768;
@@ -130,8 +129,8 @@ export default {
   width: 100%;
   background-color: #f4f7fa;
   justify-content: center;
-  align-items: flex-start; /* Cambiado a flex-start para móviles */
-  padding: 1rem 0; /* Padding vertical para pantallas pequeñas */
+  align-items: flex-start;
+  padding: 1rem 0;
 }
 
 main.main-content {
@@ -139,7 +138,7 @@ main.main-content {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 0 1rem; /* Padding horizontal para móviles */
+  padding: 0 1rem;
   width: 100%;
 }
 
@@ -156,16 +155,16 @@ main.main-content {
   padding: 1.5rem;
   width: 100%;
   max-width: 900px;
-  min-width: 280px; /* Reducido para móviles */
+  min-width: 280px;
   transition: transform 0.3s ease;
 }
 
 .calendar-controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 1.5rem;
-  flex-wrap: wrap; /* Permitir que se ajuste en pantallas pequeñas */
+  flex-wrap: nowrap;
 }
 
 .control-btn {
@@ -174,7 +173,7 @@ main.main-content {
   border: none;
   border-radius: 50%;
   padding: 0.5rem;
-  font-size: clamp(0.8rem, 2vw, 1rem); /* Ajustado para móviles */
+  font-size: clamp(0.8rem, 2vw, 1rem);
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
   display: flex;
@@ -182,7 +181,7 @@ main.main-content {
   justify-content: center;
   width: 36px;
   height: 36px;
-  margin: 0 0.25rem; /* Espaciado entre botones */
+  margin: 0 0.25rem;
 }
 
 .control-btn:hover {
@@ -195,34 +194,34 @@ main.main-content {
 }
 
 .icon {
-  width: 16px; /* Reducido para móviles */
-  height: 16px; /* Reducido para móviles */
+  width: 16px;
+  height: 16px;
 }
 
 .calendar-title {
-  font-size: clamp(1.2rem, 3vw, 1.8rem); /* Ajustado para móviles */
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
   font-weight: 600;
   color: #333;
   text-align: center;
-  flex: 1;
-  margin: 0 0.5rem; /* Reducido margen */
+  flex: 0 0 auto;
+  margin: 0 0.5rem;
   font-family: 'Inter', sans-serif;
-  white-space: nowrap; /* Evitar que el título se desborde */
+  white-space: nowrap;
 }
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(40px, 1fr)); /* Ajustado para móviles */
+  grid-template-columns: repeat(7, minmax(40px, 1fr));
   gap: 0.3rem;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: auto; /* Permitir desplazamiento horizontal si es necesario */
+  overflow-x: auto;
 }
 
 .calendar-header {
   text-align: center;
   font-weight: 600;
-  font-size: clamp(0.7rem, 1.5vw, 0.9rem); /* Ajustado para móviles */
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
   color: #666;
   padding: 0.5rem;
   text-transform: uppercase;
@@ -235,17 +234,17 @@ main.main-content {
 }
 
 .calendar-day {
-  padding: clamp(0.5rem, 1.5vw, 0.75rem); /* Ajustado para móviles */
+  padding: clamp(0.5rem, 1.5vw, 0.75rem);
   background: #ffffff;
-  border: 1px solid #e9ecef; /* Reducido borde */
+  border: 1px solid #e9ecef;
   border-radius: 8px;
-  font-size: clamp(0.8rem, 2vw, 1rem); /* Ajustado para móviles */
+  font-size: clamp(0.8rem, 2vw, 1rem);
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
   color: #333;
   font-weight: 500;
-  min-height: 50px; /* Reducido para móviles */
+  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -256,7 +255,7 @@ main.main-content {
 .calendar-day:hover {
   background: #e6f0fa;
   transform: scale(1.05);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Reducido sombra */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-day.has-task {
@@ -283,32 +282,37 @@ main.main-content {
   justify-content: center;
 }
 
-/* Nuevos breakpoints para pantallas muy pequeñas */
-@media (max-width: 576px) {
+@media (max-width: 768px) {
+  .calendar-section {
+    margin-top: 50px;
+  }
+
   .calendar-card {
     padding: 1rem;
   }
 
   .calendar-controls {
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0;
   }
 
   .calendar-title {
     font-size: clamp(1rem, 2.5vw, 1.5rem);
-    margin: 0;
+    margin: 0 0.5rem;
+    white-space: nowrap;
   }
 
   .control-btn {
-    width: 32px;
-    height: 32px;
-    padding: 0.4rem;
+    width: 28px;
+    height: 28px;
+    padding: 0.3rem;
+    margin: 0 0.2rem;
   }
 
   .icon {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 
   .calendar-grid {
@@ -330,24 +334,20 @@ main.main-content {
     font-size: clamp(0.6rem, 1.2vw, 0.7rem);
     padding: 0.4rem;
   }
-}
 
-/* Ajustes para pantallas intermedias */
-@media (min-width: 577px) and (max-width: 768px) {
-  .calendar-grid {
-    grid-template-columns: repeat(7, minmax(50px, 1fr));
+  .calendar-button {
+    width: 40px;
+    height: 40px;
+    bottom: 15px;
+    right: 15px;
   }
 
-  .calendar-day {
-    min-height: 60px;
-  }
-
-  .calendar-day.empty {
-    min-height: 60px;
+  .calendar-icon {
+    width: 20px;
+    height: 20px;
   }
 }
 
-/* Ajustes para pantallas grandes */
 @media (min-width: 769px) {
   .calendar-grid {
     grid-template-columns: repeat(7, minmax(80px, 1fr));
@@ -359,6 +359,20 @@ main.main-content {
 
   .calendar-day.empty {
     min-height: 80px;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .calendar-grid {
+    grid-template-columns: repeat(7, minmax(50px, 1fr));
+  }
+
+  .calendar-day {
+    min-height: 60px;
+  }
+
+  .calendar-day.empty {
+    min-height: 60px;
   }
 }
 </style>
