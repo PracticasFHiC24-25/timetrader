@@ -1,36 +1,53 @@
+<!-- src/views/Faq.vue -->
 <template>
   <div class="faq-page">
-    <Sidebar />
     <main class="main-content">
-      <h1>Preguntes Freqüents</h1>
-      <ul class="faq-list" role="tablist">
-        <li
-          v-for="(item, idx) in faqs"
-          :key="idx"
-          class="faq-item"
-        >
-          <button
-            class="faq-question"
-            @click="toggle(idx)"
-            :aria-expanded="openIndex === idx"
-            :aria-controls="'answer-' + idx"
-            role="tab"
-            :id="'question-' + idx"
-          >
-            {{ item.question }}
-            <span aria-hidden="true">{{ openIndex === idx ? '−' : '+' }}</span>
-          </button>
-          <div
-            v-show="openIndex === idx"
-            :id="'answer-' + idx"
-            class="faq-answer"
-            role="tabpanel"
-            :aria-labelledby="'question-' + idx"
-          >
-            <p>{{ item.answer }}</p>
-          </div>
-        </li>
-      </ul>
+      <!-- Capçalera professional -->
+      <header class="header">
+        <h1>Preguntes Freqüents</h1>
+        <p class="subtitle">Troba respostes ràpides a les preguntes més habituals sobre TimeTrader.</p>
+      </header>
+
+      <!-- Llista de preguntes freqüents -->
+      <section class="faq-section">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Camí de navegació">
+          <router-link to="/" class="breadcrumb-link">Inici</router-link>
+          <span class="breadcrumb-separator">›</span>
+          <span class="breadcrumb-current">Preguntes Freqüents</span>
+        </nav>
+        <ul class="faq-list" role="tablist">
+          <li v-for="(item, idx) in faqs" :key="idx" class="faq-item">
+            <button
+              class="faq-question"
+              @click="toggle(idx)"
+              :aria-expanded="openIndex === idx"
+              :aria-controls="'answer-' + idx"
+              role="tab"
+              :id="'question-' + idx"
+            >
+              <span>{{ item.question }}</span>
+              <i :class="openIndex === idx ? 'fas fa-minus' : 'fas fa-plus'"></i>
+            </button>
+            <div
+              v-show="openIndex === idx"
+              :id="'answer-' + idx"
+              class="faq-answer"
+              role="tabpanel"
+              :aria-labelledby="'question-' + idx"
+            >
+              <p>{{ item.answer }}</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <router-link to="/terms">Termes i Condicions</router-link>
+        <router-link to="/support">Suport</router-link>
+        <router-link to="/faq">Preguntes Freqüents</router-link>
+      </footer>
     </main>
   </div>
 </template>
@@ -86,57 +103,186 @@ export default {
 </script>
 
 <style scoped>
+/* Contenedor principal */
 .faq-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+/* Área principal de contingut */
+.main-content {
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: var(--color-bg);
+  align-items: center;
 }
 
-.main-content {
-  flex: 1;
-  padding: var(--space-lg);
-  max-width: 700px;
-  margin: 0 auto;
+/* Capçalera */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.header .subtitle {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+/* Secció de preguntes freqüents */
+.faq-section {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 40px;
 }
 
 .faq-list {
   list-style: none;
   padding: 0;
-  margin-top: 3cm; /* Aproximadament 3 cm de separació */
+  margin: 0;
 }
 
-/* Espai entre el títol i la primera pregunta */
-.faq-list {
-  list-style: none;
-  padding: 0;
-  margin-top: 1cm;
-}
-
-.faq-item + .faq-item {
-  margin-top: var(--space-md);
+.faq-item {
+  margin-bottom: 15px;
 }
 
 .faq-question {
   width: 100%;
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  padding: var(--space-md);
-  font-size: var(--font-size-md);
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  padding: 15px 20px;
+  font-size: 1.1rem;
+  color: #34495e;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background 0.2s ease;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
+
 .faq-question:hover,
 .faq-question:focus {
-  background: var(--color-secondary-bg-hover);
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.faq-question i {
+  color: #4A90E2;
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.faq-question[aria-expanded="true"] i {
+  transform: rotate(180deg);
 }
 
 .faq-answer {
-  padding: var(--space-md);
-  background: var(--color-white);
-  border-left: 4px solid var(--color-primary);
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  font-size: 1rem;
+  color: #34495e;
+  line-height: 1.6;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Animació per a l'expansió */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid #e0e0e0;
+  width: 100%;
+}
+
+.footer a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #4A90E2;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  margin-bottom: 20px;
+  align-self: flex-start;
+}
+
+.breadcrumb-link {
+  color: #4A90E2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: #bdc3c7;
+}
+
+.breadcrumb-current {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Responsivitat */
+@media (max-width: 767px) {
+  .main-content {
+    padding: 20px;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .header .subtitle {
+    font-size: 1rem;
+  }
+
+  .faq-question {
+    padding: 12px 15px;
+    font-size: 1rem;
+  }
+
+  .faq-answer {
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb {
+    display: none;
+  }
 }
 </style>

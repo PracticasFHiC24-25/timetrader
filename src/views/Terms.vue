@@ -19,6 +19,12 @@
       </nav>
 
       <section role="tabpanel">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Camí de navegació">
+          <router-link to="/" class="breadcrumb-link">Inici</router-link>
+          <span class="breadcrumb-separator">›</span>
+          <span class="breadcrumb-current">Termes Legals</span>
+        </nav>
         <!-- Termes i Condicions -->
         <div v-if="activeTab === 'Termes i Condicions'">
           <h2>Termes i Condicions</h2>
@@ -440,10 +446,43 @@ a:hover {
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  margin-bottom: 20px;
+  align-self: flex-start;
+}
+
+.breadcrumb-link {
+  color: #4A90E2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: #bdc3c7;
+}
+
+.breadcrumb-current {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
 @media (max-width: 767px) {
   :deep(.sidebar) {
     max-width: 100%;
     box-shadow: none;
+  }
+
+  .breadcrumb {
+    display: none;
   }
 }
 </style>

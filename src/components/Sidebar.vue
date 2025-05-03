@@ -4,6 +4,10 @@
     <button class="menu-toggle" @click="toggleSidebar" aria-label="Toggle menu">
       <i :class="isOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
     </button>
+    <!-- Botón de volver a home -->
+    <router-link to="/" class="back-home" aria-label="Tornar a l'inici">
+      <i class="fas fa-arrow-left"></i> Inici
+    </router-link>
     <ul>
       <li><router-link to="/agenda/tasks"><i class="fas fa-check"></i> Tasques i Events</router-link></li>
       <li><router-link to="/agenda/notifications"><i class="fas fa-bell"></i> Notificacio</router-link></li>
