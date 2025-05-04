@@ -9,7 +9,7 @@
     </div>
     <div class="input-group mt-3">
       <input v-model="input" @keyup.enter="sendMessage" type="text" class="form-control border-secondary" placeholder="Escriu la teva consulta..." />
-      <button @click="sendMessage" class="btn btn-primary ms-2">Enviar</button>
+      <button @click="sendMessage" class="btn btn-primary ms-2">Envia</button>
     </div>
   </div>
 </template>
