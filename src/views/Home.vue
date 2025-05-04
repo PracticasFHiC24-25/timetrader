@@ -120,7 +120,7 @@ export default {
       ],
       navTabs: [
         { label: 'Què és Time-Trader?', to: '/about' },
-        { label: 'Configuració i Personalització', to: '/settings' },
+        { label: 'Termes i Condicions', to: '/terms' },
         { label: 'Suport i Contacte', to: '/support' },
         { label: 'Iniciar Sessió', to: '/login'}
       ]

@@ -1,3 +1,4 @@
+<!-- src/components/Sidebar.vue -->
 <template>
   <nav :class="{ sidebar: true, open: modelValue }">
     <!-- Botó de tancar sidebar per mòbil -->
@@ -58,7 +59,7 @@
         </li>
       </ul>
 
-      <!-- Tancar sessió a baix de tot -->
+      <!-- Tancar sessió abaix de tot -->
       <div v-if="isAuthenticated" class="logout-container">
         <button class="logout-button" @click="handleLogout">
           <i class="fas fa-sign-out-alt"></i> Tancar Sessió
@@ -67,6 +68,7 @@
     </div>
   </nav>
 </template>
+
 <script>
 import { isAuthenticated, logout } from '../auth';
 
@@ -101,7 +103,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Per mantenir "tancar sessió" abaix */
+  justify-content: space-between;
   transition: transform 0.3s ease;
   z-index: 999;
 }
@@ -184,4 +186,3 @@ export default {
   }
 }
 </style>
-  
