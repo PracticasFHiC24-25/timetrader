@@ -118,6 +118,7 @@ export default {
   list-style: none;
   padding: 0;
   flex-grow: 1;
+  margin-top: 40px;
 }
 
 .sidebar li {
@@ -168,7 +169,7 @@ export default {
   font-size: 24px;
   position: absolute;
   top: 16px;
-  right: 16px;
+  right: 0px;
 }
 
 @media (max-width: 768px) {

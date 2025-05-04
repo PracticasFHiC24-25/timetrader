@@ -126,11 +126,11 @@ export default {
 .calendari-page {
   display: flex;
   min-height: 100vh;
-  width: 100%;
   background-color: #f4f7fa;
   justify-content: center;
   align-items: flex-start;
   padding: 1rem 0;
+  overflow: hidden;
 }
 
 main.main-content {
@@ -138,7 +138,7 @@ main.main-content {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 0 1rem;
+  padding: 1rem 1rem;
   width: 100%;
 }
 
@@ -215,7 +215,6 @@ main.main-content {
   gap: 0.3rem;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: auto;
 }
 
 .calendar-header {

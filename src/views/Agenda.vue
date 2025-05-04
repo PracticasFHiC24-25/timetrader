@@ -1,17 +1,17 @@
 <template>
-  <!-- Botón hamburguesa situado fuera del contenedor principal para asegurar posición fija -->
-  <button
-    class="menu-toggle-outside"
-    v-if="!isSidebarOpen"
-    @click="isSidebarOpen = true"
-    aria-label="Obrir menú"
-  >
-    <i class="fas fa-bars"></i>
-  </button>
-
   <div class="agenda">
     <Sidebar v-model="isSidebarOpen" />
     <div class="content container">
+      <!-- Botón hamburguesa dentro del contenido para alinearlo al inicio -->
+      <button
+        class="menu-toggle-inside"
+        v-if="!isSidebarOpen"
+        @click="isSidebarOpen = true"
+        aria-label="Obrir menú"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+
       <router-view />
     </div>
   </div>
@@ -31,20 +31,26 @@ export default {
 </script>
 
 <style scoped>
-.menu-toggle-outside {
-  position: fixed;
-  top: 16px;
-  left: 0; /* Colocado en el borde izquierdo del viewport */
+.menu-toggle-inside {
+  position: absolute;
+  top: 32px;
+  left: 38px;
   background: none;
   border: none;
-  padding: 8px; /* Añadido padding para que el icono no quede recortado */
+  padding: 0; /* Elimina el espacio extra */
   font-size: 24px;
+  line-height: 1;
   z-index: 1100;
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Ocultar en pantallas grandes, mostrar en móvil */
 @media (min-width: 769px) {
-  .menu-toggle-outside {
+  .menu-toggle-inside {
     display: none;
   }
 }
@@ -54,14 +60,20 @@ export default {
 }
 
 .content {
+  position: relative;
   padding: 16px;
   flex-grow: 1;
   margin-left: 250px;
+  align-items: center;
+  max-width: 100%;
+  width: auto;
 }
+
 
 @media (max-width: 768px) {
   .content {
     margin-left: 0;
+    justify-content: center;
   }
 }
 </style>
