@@ -1,12 +1,17 @@
 <template>
   <div class="notifications">
-    <h1 class="page-title">Notificacions</h1>
-    <div class="card">
+    <h1 class="page-title animate_animated animate_fadeInDown">Notificacions</h1>
+    <div class="card animate_animated animate_fadeInUp">
       <NotificationForm :tasks="tasks" @save="saveNotification" />
     </div>
-    <h2 class="section-title">Recordatoris Configurats</h2>
+    <h2 class="section-title animate_animated animate_fadeInUp">Recordatoris Configurats</h2>
     <ul class="notification-list">
-      <li v-for="notification in notifications" :key="notification.taskId" class="notification-item">
+      <li
+        v-for="(notification, idx) in notifications"
+        :key="notification.taskId"
+        class="notification-item animate_animated animate_fadeInUp"
+        :style="{ animationDelay: `${idx * 0.1}s` }"
+      >
         <span>{{ taskTitle(notification.taskId) }} - {{ notification.hours }}h abans</span>
         <div class="button-group">
           <button @click="openModal(notification.taskId)" class="edit-btn" aria-label="Editar notificació">
@@ -23,9 +28,9 @@
       </li>
     </ul>
 
-    <!-- Modal para editar notificación -->
+    <!-- Modal per editar notificació -->
     <div v-if="showModal" class="modal" @click="closeModal">
-      <div class="modal-content" @click.stop>
+      <div class="modal-content animate_animated animate_slideIn">
         <div class="modal-header">
           <h3>Editar Notificació</h3>
           <button class="close-btn" @click="closeModal" aria-label="Tancar modal">
@@ -50,9 +55,9 @@
       </div>
     </div>
 
-    <!-- Modal para confirmar borrado -->
+    <!-- Modal per confirmar esborrament -->
     <div v-if="showDeleteModal" class="modal" @click="closeDeleteModal">
-      <div class="modal-content" @click.stop>
+      <div class="modal-content animate_animated animate_slideIn">
         <div class="modal-header">
           <h3>Confirmar Esborrament</h3>
           <button class="close-btn" @click="closeDeleteModal" aria-label="Tancar modal">
@@ -131,37 +136,67 @@ export default {
 </script>
 
 <style scoped>
-/* General Styles */
-.notifications {
-  max-width: 800px;
-  margin: 1.2rem auto;
-  padding: 1.5rem;
-  background: #f8f9fa;
-  font-family: 'Inter', sans-serif;
+/* Importar fonts de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap');
+
+/* Comú */
+.notification-item,
+.btn,
+.edit-btn,
+.delete-btn,
+.close-btn {
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
+.notification-item:hover,
+.btn:hover,
+.edit-btn:hover,
+.delete-btn:hover,
+.close-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Estils generals */
+.notifications {
+  font-family: 'Open Sans', Arial, sans-serif;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #F7FAFC;
+  min-height: 100vh;
+}
+
+/* Títols */
 .page-title {
-  font-size: 2rem;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 2.5rem;
   font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 1.5rem;
+  color: #1A202C;
+  margin-bottom: 2rem;
   text-align: center;
 }
 
 .section-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-  margin: 2rem 0 1rem;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1A202C;
+  margin: 2.5rem 0 1.5rem;
 }
 
 /* Card Styles */
 .card {
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
 }
 
 /* Notification List Styles */
@@ -175,64 +210,57 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
-  background: #fff;
+  background: #ffffff;
   border-radius: 8px;
-  margin-bottom: 0.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  gap: 1rem;
 }
 
-.notification-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.notification-item span {
+  font-size: 1.1rem;
+  color: #2D3748;
 }
 
 .button-group {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
+}
+
+.edit-btn,
+.delete-btn {
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .edit-btn {
-  background: #4a90e2;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  background: #4A90E2;
+  color: #ffffff;
 }
 
 .edit-btn:hover {
-  background: #357abd;
+  background: #2B6CB0;
 }
 
 .delete-btn {
-  background: #dc3545;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  background: #DC3545;
+  color: #ffffff;
 }
 
 .delete-btn:hover {
-  background: #c82333;
+  background: #C82333;
 }
 
 .edit-btn .icon,
 .delete-btn .icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 /* Modal Styles */
@@ -246,16 +274,16 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
   animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-  background: #fff;
+  background: #ffffff;
   border-radius: 12px;
-  width: 400px;
+  width: 450px;
   max-width: 90%;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.3s ease;
 }
 
 .modal-header {
@@ -263,13 +291,14 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .modal-header h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1a1a1a;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1A202C;
   margin: 0;
 }
 
@@ -277,17 +306,21 @@ export default {
   background: none;
   border: none;
   cursor: pointer;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .close-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke: #666;
+  width: 24px;
+  height: 24px;
+  stroke: #718096;
+}
+
+.close-btn:hover svg {
+  stroke: #4A90E2;
 }
 
 .modal-body {
@@ -295,94 +328,87 @@ export default {
 }
 
 .task-label {
+  font-family: 'Open Sans', Arial, sans-serif;
   font-size: 1rem;
-  color: #666;
+  color: #718096;
   margin-bottom: 1rem;
 }
 
 .task-label span {
-  font-weight: 500;
-  color: #1a1a1a;
+  font-weight: 600;
+  color: #2D3748;
 }
 
 .input-label {
+  font-family: 'Open Sans', Arial, sans-serif;
   display: block;
   font-size: 0.9rem;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: #2D3748;
   margin-bottom: 0.5rem;
 }
 
 .input-field {
+  font-family: 'Open Sans', Arial, sans-serif;
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #E2E8F0;
   border-radius: 8px;
   font-size: 1rem;
-  color: #333;
-  background: #f9fafb;
-  transition: border-color 0.2s ease;
+  color: #2D3748;
+  background: #F9FAFB;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: #4A90E2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
 .modal-footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #E2E8F0;
   display: flex;
   justify-content: flex-end;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .btn {
+  font-family: 'Open Sans', Arial, sans-serif;
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 80px;
+  min-width: 100px;
   text-align: center;
 }
 
 .btn-secondary {
-  background: #e5e7eb;
-  color: #333;
+  background: #E5E7EB;
+  color: #2D3748;
 }
 
 .btn-secondary:hover {
-  background: #d1d5db;
+  background: #D1D5DB;
 }
 
 .btn-primary {
-  background: #4a90e2;
-  color: #fff;
+  background: linear-gradient(90deg, #4A90E2, #63B3ED);
+  color: #ffffff;
 }
 
 .btn-primary:hover {
-  background: #357abd;
+  background: linear-gradient(90deg, #2B6CB0, #4A90E2);
 }
 
 .btn:active {
   transform: scale(0.98);
 }
 
-@media (max-width: 576px) {
-  .btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    min-width: 60px;
-  }
-}
-
-/* Animations */
+/* Animacions */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -391,5 +417,107 @@ export default {
 @keyframes slideIn {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .notifications {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .notification-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .notification-item span {
+    font-size: 1rem;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .edit-btn .icon,
+  .delete-btn .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .modal-content {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.8rem;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+  }
+
+  .notification-item {
+    padding: 0.5rem;
+  }
+
+  .notification-item span {
+    font-size: 0.9rem;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .edit-btn .icon,
+  .delete-btn .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .modal-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    min-width: 70px;
+  }
 }
 </style>

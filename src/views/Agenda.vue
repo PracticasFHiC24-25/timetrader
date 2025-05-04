@@ -30,6 +30,8 @@ export default {
 };
 </script>
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap');
+
 <style scoped>
 .menu-toggle-inside {
   position: absolute;

@@ -25,7 +25,8 @@
               v-for="(tab, idx) in filteredNavTabs"
               :key="idx"
               role="none"
-              class="col-12 col-md"
+              class="col-12 col-md nav-item"
+              :style="{ animationDelay: `${idx * 0.1}s` }"
             >
               <router-link
                 :to="tab.to"
@@ -44,10 +45,10 @@
       </nav>
 
       <!-- Hero Section amb Testimonis i Frase a sota -->
-      <section class="hero-section animate_animated animate_fadeIn">
+      <section class="hero-section animate_animated animate_fadeInUp">
         <div class="container text-center">
           <div class="testimonials-container">
-            <transition name="fade" mode="out-in">
+            <transition name="slide" mode="out-in">
               <div :key="currentTestimonialIndex" class="testimonial">
                 <div class="testimonial-content">
                   <p class="testimonial-text">"{{ testimonials[currentTestimonialIndex].quote }}"</p>
@@ -69,7 +70,7 @@
       </section>
 
       <!-- Footer -->
-      <footer class="footer animate_animated animate_fadeIn" role="contentinfo">
+      <footer class="footer animate_animated animate_fadeInUp" role="contentinfo">
         <div class="container">
           <div class="row justify-content-center">
             <div class="col-12 col-md-auto"><router-link to="/terms" role="link">Termes i Condicions</router-link></div>
@@ -168,21 +169,32 @@ export default {
 .nav-tab,
 button,
 .cta-button {
-  display: inline-block;
-  transition: transform 0.1s ease, background-color 0.3s ease, color 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
+
 .nav-tab:hover,
 button:hover,
 .cta-button:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Estils generals */
 .home-page {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', Arial, sans-serif;
   font-size: 16px;
-  line-height: 1.6em;
-  color: #000000;
+  line-height: 1.6;
+  color: #2D3748;
+  background-color: #F7FAFC;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
@@ -190,45 +202,42 @@ button:hover,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
   background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .logo-title-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  flex-grow: 1;
-  justify-content: center;
+  gap: 0.75rem;
 }
 
 .logo {
-  height: 60px;
+  height: 50px;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.1);
 }
 
 .site-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   font-weight: 700;
-  font-size: 32px;
-  line-height: 1.5em;
-  margin-bottom: 0;
-  color: #000000;
-}
-
-.hamburger {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #4A90E2;
+  font-size: 2rem;
+  color: #1A202C;
+  margin: 0;
 }
 
 /* Navegació */
 .nav-tabs {
-  background-color: #fff;
+  background-color: #ffffff;
   padding: 1rem 0;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .nav-list {
@@ -236,24 +245,29 @@ button:hover,
   padding: 0;
   margin: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.nav-item {
+  animation: slideIn 0.5s ease forwards;
 }
 
 .nav-tab {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
   color: #4A90E2;
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  transition: color 0.3s ease, background-color 0.3s ease;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
   text-align: center;
-  width: 100%;
+  display: block;
 }
 
 .nav-tab:hover {
-  color: #fff;
-  background-color: #4A90E2;
+  background-color: #EDF2F7;
+  color: #2B6CB0;
 }
 
 .nav-tab.login-tab {
@@ -262,106 +276,186 @@ button:hover,
 }
 
 .nav-tab.login-tab:hover {
-  background-color: #3a78c2;
+  background-color: #2B6CB0;
+  color: #ffffff;
 }
 
-/* Hero Section amb Testimonis i Frase a sota */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #4A90E2;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.hamburger:hover {
+  transform: rotate(90deg);
+}
+
+/* Hero Section */
 .hero-section {
   text-align: center;
-  padding: 4rem 1rem;
-  background: linear-gradient(135deg, #F5F6FA 0%, #E6E9F0 100%);
-  border-bottom: 1px solid #ddd;
+  padding: 5rem 1rem;
+  background: linear-gradient(135deg, #E6F0FA 0%, #BEE3F8 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  animation: pulse 10s infinite ease-in-out;
+  z-index: 0;
 }
 
 .testimonials-container {
-  min-height: 80px; /* Espai reservat per evitar salts de layout */
-  margin-bottom: 2rem;
+  min-height: 120px;
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .testimonial-content {
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
   margin: 0 auto;
   text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-content:hover {
+  transform: translateY(-5px);
 }
 
 .testimonial-text {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 14px;
-  color: #333333;
-  margin-bottom: 0.5rem;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 1.1rem;
+  color: #2D3748;
+  margin-bottom: 0.75rem;
 }
 
 .testimonial-author {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 12px;
-  color: #666666;
-  margin-bottom: 0;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 0.9rem;
+  color: #718096;
 }
 
 .hero-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   font-weight: 700;
-  font-size: 28px; /* Reduït per fer la lletra més petita */
-  line-height: 1.5em;
-  color: #000000;
+  font-size: 2.5rem;
+  color: #1A202C;
   margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-subtitle {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px; /* Reduït per fer la lletra més petita */
-  color: #333333;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 1.25rem;
+  color: #4A5568;
   margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .cta-button {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #ffffff;
-  background-color: #4A90E2;
-  padding: 0.75rem 2rem;
-  border-radius: 5px;
+  background: linear-gradient(90deg, #4A90E2, #63B3ED);
+  padding: 0.75rem 2.5rem;
+  border-radius: 50px;
   text-decoration: none;
-  transition: background-color 0.3s ease;
+  display: inline-block;
+  animation: pulseCta 2s infinite ease-in-out;
+  position: relative;
+  z-index: 1;
 }
 
 .cta-button:hover {
-  background-color: #3a78c2;
+  background: linear-gradient(90deg, #2B6CB0, #4A90E2);
 }
 
-/* Animació de transició per als testimonis */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
+/* Animacions */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.fade-enter-from,
-.fade-leave-to {
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.3;
+  }
+}
+
+@keyframes pulseCta {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(74, 144, 226, 0);
+  }
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.5s ease;
+}
+
+.slide-enter-from {
   opacity: 0;
+  transform: translateX(20px);
+}
+
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
 }
 
 /* Footer */
 .footer {
   padding: 2rem;
-  background-color: #f9f9f9;
-  border-top: 1px solid #ccc;
+  background-color: #1A202C;
+  color: #E2E8F0;
 }
 
 .footer a {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 14px;
-  color: #4A90E2;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 0.9rem;
+  color: #A0AEC0;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .footer a:hover {
-  color: #3a78c2;
+  color: #E2E8F0;
 }
 
 /* Responsive */
@@ -372,9 +466,13 @@ button:hover,
 
   .nav-tabs {
     display: none;
-    flex-direction: column;
-    background-color: white;
-    border-top: 1px solid #ccc;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 999;
   }
 
   .nav-tabs.nav-mobile-open {
@@ -388,41 +486,62 @@ button:hover,
 
   .nav-tab {
     padding: 1rem;
-    border-bottom: 1px solid #eee;
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    border-bottom: 1px solid #E2E8F0;
   }
 
   .site-title {
-    font-size: 20px;
+    font-size: 1.5rem;
   }
 
   .logo {
-    height: 50px;
+    height: 40px;
   }
 
-  .logo-title-group {
-    gap: 0.3rem;
+  .hero-section {
+    padding: 3rem 1rem;
   }
 
   .hero-title {
-    font-size: 20px;
+    font-size: 1.8rem;
   }
-  
+
   .hero-subtitle {
-    font-size: 14px;
+    font-size: 1rem;
   }
 
   .testimonial-text {
-    font-size: 14px;
+    font-size: 1rem;
   }
 
   .testimonial-author {
-    font-size: 10px;
+    font-size: 0.8rem;
+  }
+
+  .cta-button {
+    padding: 0.6rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .site-title {
+    font-size: 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .testimonial-content {
+    padding: 1rem;
   }
 }
 </style>

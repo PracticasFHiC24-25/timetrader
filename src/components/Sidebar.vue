@@ -95,6 +95,7 @@ export default {
 
 <style scoped>
 .sidebar {
+  font-family: 'Montserrat', sans-serif;
   width: 250px;
   background: #FFFFFF;
   border-right: 1px solid #E0E0E0;
