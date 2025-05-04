@@ -1,9 +1,9 @@
 <!-- src/views/Notifications.vue -->
 <template>
   <div class="notifications container">
-    <h1>Notificaciones</h1>
+    <h1>Notificacions</h1>
     <NotificationForm :tasks="tasks" @save="saveNotification" />
-    <h2>Recordatorios Configurados</h2>
+    <h2>Recordatoris Configurats</h2>
     <ul>
       <li v-for="notification in notifications" :key="notification.taskId">
         {{ taskTitle(notification.taskId) }} - {{ notification.hours }}h antes

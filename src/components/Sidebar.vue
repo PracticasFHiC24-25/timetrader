@@ -1,6 +1,6 @@
 <template>
   <nav :class="{ sidebar: true, open: modelValue }">
-    <!-- Botón de cerrar sidebar SOLO visible en móvil -->
+    <!-- Botó de tancar sidebar per mòbil -->
     <button
       class="close-toggle"
       @click="$emit('update:modelValue', false)"
@@ -9,31 +9,85 @@
       <i class="fas fa-times"></i>
     </button>
 
-    <!-- Botón de inicio -->
-    <router-link to="/" class="back-home" @click="$emit('update:modelValue', false)">
-      <i class="fas fa-arrow-left"></i> Inici
-    </router-link>
+    <div class="sidebar-content">
+      <ul>
+        <li>
+          <router-link
+            to="/agenda/calendari"
+            @click="$emit('update:modelValue', false)"
+            :aria-current="$route.path === '/agenda/calendari' ? 'page' : undefined"
+          >
+            <i class="fas fa-calendar"></i> Calendari
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/agenda/tasks"
+            @click="$emit('update:modelValue', false)"
+            :aria-current="$route.path === '/agenda/tasks' ? 'page' : undefined"
+          >
+            <i class="fas fa-check"></i> Tasques i Events
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/agenda/notifications"
+            @click="$emit('update:modelValue', false)"
+            :aria-current="$route.path === '/agenda/notifications' ? 'page' : undefined"
+          >
+            <i class="fas fa-bell"></i> Notificacions
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/smart-planning"
+            @click="$emit('update:modelValue', false)"
+            :aria-current="$route.path === '/smart-planning' ? 'page' : undefined"
+          >
+            <i class="fas fa-brain"></i> Planificació Intel·ligent
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/settings"
+            @click="$emit('update:modelValue', false)"
+            :aria-current="$route.path === '/settings' ? 'page' : undefined"
+          >
+            <i class="fas fa-cog"></i> Configuració
+          </router-link>
+        </li>
+      </ul>
 
-    <ul>
-      <li><router-link to="/agenda/tasks" @click="$emit('update:modelValue', false)">
-        <i class="fas fa-check"></i> Tasques i Events</router-link></li>
-      <li><router-link to="/agenda/notifications" @click="$emit('update:modelValue', false)">
-        <i class="fas fa-bell"></i> Notificacio</router-link></li>
-      <li><router-link to="/agenda/ai-assistant" @click="$emit('update:modelValue', false)">
-        <i class="fas fa-robot"></i> Asistent IA</router-link></li>
-      <li><router-link to="/community" @click="$emit('update:modelValue', false)">
-        <i class="fas fa-life-ring"></i> Comunitat</router-link></li>
-      <li><router-link to="/support" @click="$emit('update:modelValue', false)">
-        <i class="fas fa-envelope"></i> Suport i Contacte</router-link></li>
-    </ul>
+      <!-- Tancar sessió a baix de tot -->
+      <div v-if="isAuthenticated" class="logout-container">
+        <button class="logout-button" @click="handleLogout">
+          <i class="fas fa-sign-out-alt"></i> Tancar Sessió
+        </button>
+      </div>
+    </div>
   </nav>
 </template>
-
 <script>
+import { isAuthenticated, logout } from '../auth';
+
 export default {
   props: {
     modelValue: Boolean,
   },
+  computed: {
+    isAuthenticated() {
+      return isAuthenticated.value;
+    }
+  },
+  methods: {
+    handleLogout() {
+      if (confirm('Segur que vols tancar sessió?')) {
+        logout();
+        this.$emit('update:modelValue', false);
+        this.$router.push('/');
+      }
+    }
+  }
 };
 </script>
 
@@ -45,12 +99,31 @@ export default {
   padding: 16px;
   position: fixed;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Per mantenir "tancar sessió" abaix */
   transition: transform 0.3s ease;
   z-index: 999;
 }
-.sidebar ul { list-style: none; padding: 0; }
-.sidebar li { margin: 8px 0; }
-.sidebar a {
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  flex-grow: 1;
+}
+
+.sidebar li {
+  margin: 8px 0;
+}
+
+.sidebar a,
+.sidebar .logout-button {
   color: var(--text-primary);
   text-decoration: none;
   display: flex;
@@ -59,7 +132,32 @@ export default {
   padding: 8px;
   border-radius: 4px;
 }
-.sidebar a:hover { background: var(--secondary); }
+
+.sidebar a:hover,
+.sidebar .logout-button:hover {
+  background: var(--secondary);
+}
+
+.sidebar a[aria-current="page"] {
+  background: #4A90E2;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.logout-container {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #ddd;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+}
 
 .close-toggle {
   display: none;
@@ -86,3 +184,4 @@ export default {
   }
 }
 </style>
+  
