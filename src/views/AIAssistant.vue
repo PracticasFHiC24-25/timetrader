@@ -47,6 +47,7 @@ export default {
 .main-content {
   padding: 40px;
   display: flex;
+  margin: 1.2rem auto;
   flex-direction: column;
   align-items: center;
 }

@@ -8,11 +8,18 @@
     <ul class="notification-list">
       <li v-for="notification in notifications" :key="notification.taskId" class="notification-item">
         <span>{{ taskTitle(notification.taskId) }} - {{ notification.hours }}h abans</span>
-        <button @click="openModal(notification.taskId)" class="edit-btn" aria-label="Editar notificació">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-          </svg>
-        </button>
+        <div class="button-group">
+          <button @click="openModal(notification.taskId)" class="edit-btn" aria-label="Editar notificació">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+          </button>
+          <button @click="openDeleteModal(notification.taskId)" class="delete-btn" aria-label="Esborrar notificació">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+        </div>
       </li>
     </ul>
 
@@ -28,7 +35,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <p class="task-label">Tasca: <span>{{ taskTitle(selectedTaskId) }}</span> (No editable)</p>
+          <p class="task-label">Tasca: <span>{{ taskTitle(selectedTaskId) }}</span></p>
           <label class="input-label" for="edit-hours">Hores abans</label>
           <select v-model="editedHours" id="edit-hours" class="input-field">
             <option>4</option>
@@ -39,6 +46,27 @@
         <div class="modal-footer">
           <button @click="closeModal" class="btn btn-secondary">Cancelar</button>
           <button @click="saveEditedNotification" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para confirmar borrado -->
+    <div v-if="showDeleteModal" class="modal" @click="closeDeleteModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Confirmar Esborrament</h3>
+          <button class="close-btn" @click="closeDeleteModal" aria-label="Tancar modal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Estàs segur que vols esborrar la notificació per "{{ taskTitle(selectedTaskId) }}"?</p>
+        </div>
+        <div class="modal-footer">
+          <button @click="closeDeleteModal" class="btn btn-secondary">No</button>
+          <button @click="confirmDelete" class="btn btn-primary">Sí</button>
         </div>
       </div>
     </div>
@@ -60,6 +88,7 @@ export default {
       showModal: false,
       selectedTaskId: null,
       editedHours: 4,
+      showDeleteModal: false,
     };
   },
   methods: {
@@ -86,6 +115,17 @@ export default {
       }
       this.closeModal();
     },
+    openDeleteModal(taskId) {
+      this.selectedTaskId = taskId;
+      this.showDeleteModal = true;
+    },
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+    },
+    confirmDelete() {
+      this.notifications = this.notifications.filter(n => n.taskId !== this.selectedTaskId);
+      this.closeDeleteModal();
+    },
   },
 };
 </script>
@@ -94,7 +134,7 @@ export default {
 /* General Styles */
 .notifications {
   max-width: 800px;
-  margin: 2rem auto;
+  margin: 1.2rem auto;
   padding: 1.5rem;
   background: #f8f9fa;
   font-family: 'Inter', sans-serif;
@@ -140,11 +180,17 @@ export default {
   border-radius: 8px;
   margin-bottom: 0.5rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 1.5rem;
 }
 
 .notification-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .edit-btn {
@@ -165,7 +211,26 @@ export default {
   background: #357abd;
 }
 
-.edit-btn .icon {
+.delete-btn {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
+
+.edit-btn .icon,
+.delete-btn .icon {
   width: 16px;
   height: 16px;
 }
@@ -280,6 +345,11 @@ export default {
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  text-align: center;
 }
 
 .btn-secondary {
@@ -302,6 +372,14 @@ export default {
 
 .btn:active {
   transform: scale(0.98);
+}
+
+@media (max-width: 576px) {
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    min-width: 60px;
+  }
 }
 
 /* Animations */

@@ -8,12 +8,11 @@ import AIAssistant from '../views/AIAssistant.vue';
 import Support from '../views/Support.vue';
 import Terms from '../views/Terms.vue';
 import FAQ from '../views/FAQ.vue';
-import SmartPlanning from '../views/SmartPlanning.vue';
 import Settings from '../views/Settings.vue';
 import Calendari from '@/views/Calendari.vue';
 import Profile from '../views/Profile.vue';
 import Login from '../views/Login.vue';
-import Register from '../views/Register.vue'; // ✅ Importem el component de registre
+import Register from '../views/Register.vue'; //  Importem el component de registre
 
 const routes = [
   { path: '/', component: Home },
@@ -24,9 +23,9 @@ const routes = [
       { path: 'calendari', component: Calendari },
       { path: 'tasks', component: Tasks },
       { path: 'notifications', component: Notifications },
+      { path: '/smart-planning', component: AIAssistant },
     ],
   },
-  { path: '/smart-planning', component: SmartPlanning },
   { path: '/settings', component: Settings },
   { path: '/support', component: Support },
   { path: '/terms', component: Terms },
