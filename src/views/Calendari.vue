@@ -3,38 +3,109 @@
     <main class="main-content">
       <section class="calendar-section">
         <div class="calendar-card">
+          <!-- Controls -->
           <div class="calendar-controls">
-            <button @click="previousMonth" aria-label="Mes anterior" class="control-btn">
+            <button @click="previousPeriod" aria-label="Període anterior" class="control-btn">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
               </svg>
             </button>
-            <h3 class="calendar-title">{{ monthName }} {{ year }}</h3>
-            <button @click="nextMonth" aria-label="Mes següent" class="control-btn">
+            <h3 class="calendar-title">
+              <span v-if="viewMode === 'month'">{{ monthName }} {{ year }}</span>
+              <span v-if="viewMode === 'week'">Setmana del {{ weekStartDate }} al {{ weekEndDate }} {{ year }}</span>
+              <span v-if="viewMode === 'day'">{{ selectedDay }} {{ monthName }} {{ year }}</span>
+            </h3>
+            <button @click="nextPeriod" aria-label="Període següent" class="control-btn">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </button>
           </div>
-          <div class="calendar-grid">
+
+          <!-- Selector de vista -->
+          <div class="view-selector">
+            <label for="view-mode" class="view-label">Vista:</label>
+            <select v-model="viewMode" id="view-mode" @change="updateView" class="view-select">
+              <option value="month">Mensual</option>
+              <option value="week">Setmanal</option>
+              <option value="day">Diària</option>
+            </select>
+          </div>
+
+          <!-- Vista Mensual -->
+          <div v-if="viewMode === 'month'" class="calendar-grid">
             <div class="calendar-header" v-for="day in weekDays" :key="day" :class="{ 'short': useShortDays }">
               {{ useShortDays ? day.slice(0, 2) : day }}
             </div>
-            <div
-              v-for="n in firstDayOffset"
-              :key="'empty-'+n"
-              class="calendar-day empty"
-            ></div>
+            <div v-for="n in firstDayOffset" :key="'empty-'+n" class="calendar-day empty"></div>
             <button
               v-for="day in daysInMonth"
               :key="day"
               class="calendar-day"
               :class="{ 'has-task': hasTask(day) }"
               @click="onDayClick(day)"
-              :title="getTaskTitle(day)"
             >
-              {{ day }}
+              <div class="day-number">{{ day }}</div>
+              <div v-if="hasTask(day)" class="task-list">
+                <div
+                  v-for="task in getTasksForDay(day)"
+                  :key="task.id"
+                  class="task-item"
+                  :title="task.title"
+                >
+                  {{ task.title }}
+                </div>
+              </div>
             </button>
+          </div>
+
+          <!-- Vista Setmanal -->
+          <div v-if="viewMode === 'week'" class="calendar-grid week-view">
+            <div class="time-slot" v-for="hour in hours" :key="hour" :style="{ height: timeSlotHeight + 'px' }">
+              {{ hour }}:00
+            </div>
+            <div class="day-header" v-for="(day, index) in weekDays" :key="day" :style="{ gridColumn: index + 2 }">
+              {{ useShortDays ? day.slice(0, 2) : day }} {{ weekDaysDates[index] }}
+            </div>
+            <div
+              v-for="(day, index) in weekDaysDates"
+              :key="'day-' + index"
+              class="week-day-slot"
+              :style="{ gridColumn: index + 2, gridRow: '2 / span 16' }"
+            >
+              <div
+                v-for="task in getTasksForDay(day, true)"
+                :key="task.id"
+                class="task-event"
+                :style="getTaskStyle(task, day)"
+                :title="task.title"
+              >
+                {{ task.title }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Vista Diària -->
+          <div v-if="viewMode === 'day'" class="day-view">
+            <div class="day-header">
+              <h4>Dia: {{ selectedDay }} {{ monthName }} {{ year }}</h4>
+            </div>
+            <div class="day-grid">
+              <div class="time-slot" v-for="hour in hours" :key="hour" :style="{ height: timeSlotHeight + 'px' }">
+                {{ hour }}:00
+              </div>
+              <div class="day-events" :style="{ gridRow: '2 / span 16' }">
+                <div
+                  v-for="task in getTasksForDay(selectedDay)"
+                  :key="task.id"
+                  class="task-event"
+                  :style="getTaskStyle(task, selectedDay)"
+                  :title="task.title"
+                >
+                  {{ task.title }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -51,12 +122,17 @@ export default {
       currentDate: today,
       selectedMonth: today.getMonth(),
       selectedYear: today.getFullYear(),
+      selectedDay: today.getDate(),
+      selectedWeek: 0,
+      viewMode: 'month',
       weekDaysFull: ['Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte', 'Diumenge'],
       weekDaysShort: ['Dl', 'Dt', 'Dc', 'Dj', 'Dv', 'Ds', 'Dg'],
       useShortDays: false,
+      hours: Array.from({ length: 16 }, (_, i) => i + 8), // De 8 a 23
+      timeSlotHeight: 50,
       tasks: [
-        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-05-20', completed: false },
-        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-05-22', completed: false },
+        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-05-20', startTime: '09:00', endTime: '12:00', completed: false },
+        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-05-22', startTime: '14:00', endTime: '16:00', completed: false },
       ],
     };
   },
@@ -78,38 +154,191 @@ export default {
     weekDays() {
       return this.useShortDays ? this.weekDaysShort : this.weekDaysFull;
     },
+    weekStartDate() {
+      const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth, 1);
+      const firstMonday = new Date(firstDayOfMonth);
+      firstMonday.setDate(firstDayOfMonth.getDate() - ((firstDayOfMonth.getDay() + 6) % 7));
+      const weekStart = new Date(firstMonday);
+      weekStart.setDate(firstMonday.getDate() + this.selectedWeek * 7);
+      return weekStart.getDate();
+    },
+    weekEndDate() {
+      const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth, 1);
+      const firstMonday = new Date(firstDayOfMonth);
+      firstMonday.setDate(firstDayOfMonth.getDate() - ((firstDayOfMonth.getDay() + 6) % 7));
+      const weekEnd = new Date(firstMonday);
+      weekEnd.setDate(firstMonday.getDate() + this.selectedWeek * 7 + 6);
+      return weekEnd.getDate();
+    },
+    weekDaysDates() {
+      const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth, 1);
+      const firstMonday = new Date(firstDayOfMonth);
+      firstMonday.setDate(firstDayOfMonth.getDate() - ((firstDayOfMonth.getDay() + 6) % 7));
+      const weekStart = new Date(firstMonday);
+      weekStart.setDate(firstMonday.getDate() + this.selectedWeek * 7);
+      const dates = [];
+      for (let i = 0; i < 7; i++) {
+        const currentDay = new Date(weekStart);
+        currentDay.setDate(weekStart.getDate() + i);
+        dates.push(currentDay.getDate());
+      }
+      return dates;
+    },
   },
   methods: {
-    previousMonth() {
-      if (this.selectedMonth === 0) {
-        this.selectedMonth = 11;
-        this.selectedYear--;
-      } else {
-        this.selectedMonth--;
+    previousPeriod() {
+      if (this.viewMode === 'month') {
+        if (this.selectedMonth === 0) {
+          this.selectedMonth = 11;
+          this.selectedYear--;
+        } else {
+          this.selectedMonth--;
+        }
+      } else if (this.viewMode === 'week') {
+        this.selectedWeek--;
+        if (this.selectedWeek < 0) {
+          if (this.selectedMonth === 0) {
+            this.selectedMonth = 11;
+            this.selectedYear--;
+          } else {
+            this.selectedMonth--;
+          }
+          const weeksInMonth = Math.ceil((this.daysInMonth + this.firstDayOffset) / 7);
+          this.selectedWeek = weeksInMonth - 1;
+        }
+      } else if (this.viewMode === 'day') {
+        const currentDay = new Date(this.selectedYear, this.selectedMonth, this.selectedDay);
+        currentDay.setDate(currentDay.getDate() - 1);
+        this.selectedDay = currentDay.getDate();
+        this.selectedMonth = currentDay.getMonth();
+        this.selectedYear = currentDay.getFullYear();
       }
     },
-    nextMonth() {
-      if (this.selectedMonth === 11) {
-        this.selectedMonth = 0;
-        this.selectedYear++;
-      } else {
-        this.selectedMonth++;
+    nextPeriod() {
+      if (this.viewMode === 'month') {
+        if (this.selectedMonth === 11) {
+          this.selectedMonth = 0;
+          this.selectedYear++;
+        } else {
+          this.selectedMonth++;
+        }
+      } else if (this.viewMode === 'week') {
+        this.selectedWeek++;
+        const weeksInMonth = Math.ceil((this.daysInMonth + this.firstDayOffset) / 7);
+        if (this.selectedWeek >= weeksInMonth) {
+          if (this.selectedMonth === 11) {
+            this.selectedMonth = 0;
+            this.selectedYear++;
+          } else {
+            this.selectedMonth++;
+          }
+          this.selectedWeek = 0;
+        }
+      } else if (this.viewMode === 'day') {
+        const currentDay = new Date(this.selectedYear, this.selectedMonth, this.selectedDay);
+        currentDay.setDate(currentDay.getDate() + 1);
+        this.selectedDay = currentDay.getDate();
+        this.selectedMonth = currentDay.getMonth();
+        this.selectedYear = currentDay.getFullYear();
       }
     },
-    onDayClick(day) {
+    updateView() {
+      if (this.viewMode === 'week') {
+        const currentDate = new Date(this.selectedYear, this.selectedMonth, this.selectedDay);
+        const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth, 1);
+        const firstMonday = new Date(firstDayOfMonth);
+        firstMonday.setDate(firstDayOfMonth.getDate() - ((firstDayOfMonth.getDay() + 6) % 7));
+        const diffDays = Math.floor((currentDate - firstMonday) / (1000 * 60 * 60 * 24));
+        this.selectedWeek = Math.floor(diffDays / 7);
+      }
+    },
+    onDayClick(day, isWeekView = false) {
+      if (isWeekView) {
+        const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth, 1);
+        const firstMonday = new Date(firstDayOfMonth);
+        firstMonday.setDate(firstDayOfMonth.getDate() - ((firstDayOfMonth.getDay() + 6) % 7));
+        const weekStart = new Date(firstMonday);
+        weekStart.setDate(firstMonday.getDate() + this.selectedWeek * 7);
+        const clickedDay = new Date(weekStart);
+        const dayIndex = this.weekDaysDates.indexOf(day);
+        clickedDay.setDate(weekStart.getDate() + dayIndex);
+        this.selectedDay = clickedDay.getDate();
+        this.selectedMonth = clickedDay.getMonth();
+        this.selectedYear = clickedDay.getFullYear();
+      } else {
+        this.selectedDay = day;
+      }
       this.$router.push('/agenda/tasks');
     },
     checkScreenSize() {
       this.useShortDays = window.innerWidth < 768;
     },
-    hasTask(day) {
-      const fullDate = new Date(this.selectedYear, this.selectedMonth, day).toISOString().split('T')[0];
+    hasTask(day, isWeekView = false) {
+      let fullDate;
+      if (isWeekView) {
+        const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth, 1);
+        const firstMonday = new Date(firstDayOfMonth);
+        firstMonday.setDate(firstDayOfMonth.getDate() - ((firstDayOfMonth.getDay() + 6) % 7));
+        const weekStart = new Date(firstMonday);
+        weekStart.setDate(firstMonday.getDate() + this.selectedWeek * 7);
+        const currentDay = new Date(weekStart);
+        const dayIndex = this.weekDaysDates.indexOf(day);
+        currentDay.setDate(weekStart.getDate() + dayIndex);
+        fullDate = currentDay.toISOString().split('T')[0];
+      } else {
+        fullDate = new Date(this.selectedYear, this.selectedMonth, day).toISOString().split('T')[0];
+      }
       return this.tasks.some(task => task.due === fullDate && !task.completed);
     },
-    getTaskTitle(day) {
-      const fullDate = new Date(this.selectedYear, this.selectedMonth, day).toISOString().split('T')[0];
-      const task = this.tasks.find(task => task.due === fullDate && !task.completed);
-      return task ? task.title : '';
+    getTasksForDay(day, isWeekView = false) {
+      let fullDate;
+      if (isWeekView) {
+        const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth, 1);
+        const firstMonday = new Date(firstDayOfMonth);
+        firstMonday.setDate(firstDayOfMonth.getDate() - ((firstDayOfMonth.getDay() + 6) % 7));
+        const weekStart = new Date(firstMonday);
+        weekStart.setDate(firstMonday.getDate() + this.selectedWeek * 7);
+        const currentDay = new Date(weekStart);
+        const dayIndex = this.weekDaysDates.indexOf(day);
+        currentDay.setDate(weekStart.getDate() + dayIndex);
+        fullDate = currentDay.toISOString().split('T')[0];
+      } else {
+        fullDate = new Date(this.selectedYear, this.selectedMonth, day).toISOString().split('T')[0];
+      }
+      return this.tasks.filter(task => task.due === fullDate && !task.completed);
+    },
+    getTaskStyle(task, day) {
+      const startHour = parseInt(task.startTime.split(':')[0]) - 8; // Ajustem perquè 8:00 sigui la primera hora
+      const endHour = parseInt(task.endTime.split(':')[0]) - 8; // Ajustem perquè 23:00 sigui l'última hora
+      const duration = endHour - startHour;
+      let fullDate = new Date(this.selectedYear, this.selectedMonth, day).toISOString().split('T')[0];
+      if (this.viewMode === 'week') {
+        const firstDayOfMonth = new Date(this.selectedYear, this.selectedMonth, 1);
+        const firstMonday = new Date(firstDayOfMonth);
+        firstMonday.setDate(firstDayOfMonth.getDate() - ((firstDayOfMonth.getDay() + 6) % 7));
+        const weekStart = new Date(firstMonday);
+        weekStart.setDate(firstMonday.getDate() + this.selectedWeek * 7);
+        const currentDay = new Date(weekStart);
+        const dayIndex = this.weekDaysDates.indexOf(day);
+        currentDay.setDate(weekStart.getDate() + dayIndex);
+        fullDate = currentDay.toISOString().split('T')[0];
+      }
+      if (task.due === fullDate) {
+        return {
+          top: `${startHour * this.timeSlotHeight}px`,
+          height: `${duration * this.timeSlotHeight}px`,
+          backgroundColor: '#28a745',
+          color: '#fff',
+          borderRadius: '4px',
+          padding: '2px 4px',
+          position: 'absolute',
+          width: 'calc(100% - 4px)',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        };
+      }
+      return {};
     },
   },
   mounted() {
@@ -163,7 +392,7 @@ main.main-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   flex-wrap: nowrap;
 }
 
@@ -209,12 +438,123 @@ main.main-content {
   white-space: nowrap;
 }
 
+.view-selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.view-label {
+  font-size: 1rem;
+  color: #333;
+  margin-right: 0.5rem;
+}
+
+.view-select {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #e9ecef;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(40px, 1fr));
   gap: 0.3rem;
   width: 100%;
   box-sizing: border-box;
+}
+
+.week-view {
+  display: grid;
+  grid-template-columns: 50px repeat(7, 1fr);
+  grid-template-rows: 40px repeat(16, 50px); /* Capçalera + 16 hores (8-23) */
+  gap: 0.3rem;
+  position: relative;
+  min-height: 880px; /* 40px capçalera + 16 * 50px */
+}
+
+.day-grid {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  grid-template-rows: 40px repeat(16, 50px); /* Capçalera + 16 hores (8-23) */
+  gap: 0.3rem;
+  width: 100%;
+  position: relative;
+  min-height: 880px; /* 40px capçalera + 16 * 50px */
+}
+
+.time-slot {
+  grid-column: 1;
+  text-align: right;
+  padding-right: 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.day-header {
+  grid-row: 1;
+  grid-column: 2 / span 7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+  background: #e9ecef;
+  border-radius: 6px 6px 0 0;
+}
+
+.day-events {
+  grid-column: 2;
+  grid-row: 2 / span 16;
+  position: relative;
+}
+
+.day-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.task-list {
+  max-height: 50px;
+  overflow-y: auto;
+  width: 100%;
+  font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+  color: #333;
+  text-align: left;
+}
+
+.task-item {
+  padding: 0.1rem 0.3rem;
+  background: #28a745;
+  color: #fff;
+  border-radius: 3px;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+}
+
+.task-event {
+  position: absolute;
+  border-radius: 4px;
+  padding: 2px 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.week-day-slot {
+  position: relative;
+  grid-row: 2 / span 16;
+  border-left: 1px solid #e9ecef;
 }
 
 .calendar-header {
@@ -243,10 +583,11 @@ main.main-content {
   text-align: center;
   color: #333;
   font-weight: 500;
-  min-height: 50px;
+  min-height: 80px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
   box-sizing: border-box;
 }
@@ -258,22 +599,26 @@ main.main-content {
 }
 
 .calendar-day.has-task {
-  background: #28a745;
+  background: #d4edda;
   border-color: #28a745;
-  color: #fff;
-  font-weight: 600;
+  color: #333;
 }
 
 .calendar-day.has-task:hover {
-  background: #218838;
+  background: #c3e6cb;
   transform: scale(1.05);
+}
+
+.day-number {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
 }
 
 .calendar-day.empty {
   background: #ffffff;
   border: 1px solid #e9ecef;
   border-radius: 8px;
-  min-height: 50px;
+  min-height: 80px;
   width: 100%;
   box-sizing: border-box;
   display: flex;
@@ -319,14 +664,34 @@ main.main-content {
     gap: 0.2rem;
   }
 
+  .week-view {
+    grid-template-columns: 40px repeat(7, 1fr);
+    grid-template-rows: 30px repeat(16, 40px);
+    min-height: 670px; /* 30px capçalera + 16 * 40px */
+  }
+
+  .day-grid {
+    grid-template-columns: 40px 1fr;
+    grid-template-rows: 30px repeat(16, 40px);
+    min-height: 670px; /* 30px capçalera + 16 * 40px */
+  }
+
+  .time-slot {
+    font-size: 0.7rem;
+  }
+
+  .day-header {
+    font-size: 0.8rem;
+  }
+
   .calendar-day {
     padding: 0.4rem;
     font-size: clamp(0.7rem, 1.5vw, 0.9rem);
-    min-height: 40px;
+    min-height: 60px;
   }
 
   .calendar-day.empty {
-    min-height: 40px;
+    min-height: 60px;
   }
 
   .calendar-header {
@@ -334,16 +699,17 @@ main.main-content {
     padding: 0.4rem;
   }
 
-  .calendar-button {
-    width: 40px;
-    height: 40px;
-    bottom: 15px;
-    right: 15px;
+  .task-list {
+    max-height: 30px;
+    font-size: clamp(0.5rem, 1vw, 0.65rem);
   }
 
-  .calendar-icon {
-    width: 20px;
-    height: 20px;
+  .task-item {
+    font-size: clamp(0.5rem, 1vw, 0.65rem);
+  }
+
+  .task-event {
+    font-size: 0.7rem;
   }
 }
 
@@ -352,12 +718,24 @@ main.main-content {
     grid-template-columns: repeat(7, minmax(80px, 1fr));
   }
 
+  .week-view {
+    grid-template-columns: 50px repeat(7, 1fr);
+    grid-template-rows: 40px repeat(16, 50px);
+    min-height: 880px; /* 40px capçalera + 16 * 50px */
+  }
+
+  .day-grid {
+    grid-template-columns: 50px 1fr;
+    grid-template-rows: 40px repeat(16, 50px);
+    min-height: 880px; /* 40px capçalera + 16 * 50px */
+  }
+
   .calendar-day {
-    min-height: 80px;
+    min-height: 100px;
   }
 
   .calendar-day.empty {
-    min-height: 80px;
+    min-height: 100px;
   }
 }
 
@@ -366,12 +744,24 @@ main.main-content {
     grid-template-columns: repeat(7, minmax(50px, 1fr));
   }
 
+  .week-view {
+    grid-template-columns: 40px repeat(7, 1fr);
+    grid-template-rows: 30px repeat(16, 40px);
+    min-height: 670px; /* 30px capçalera + 16 * 40px */
+  }
+
+  .day-grid {
+    grid-template-columns: 40px 1fr;
+    grid-template-rows: 30px repeat(16, 40px);
+    min-height: 670px; /* 30px capçalera + 16 * 40px */
+  }
+
   .calendar-day {
-    min-height: 60px;
+    min-height: 80px;
   }
 
   .calendar-day.empty {
-    min-height: 60px;
+    min-height: 80px;
   }
 }
 </style>

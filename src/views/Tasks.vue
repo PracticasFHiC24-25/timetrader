@@ -45,6 +45,14 @@
               <input v-model="newTask.due" id="task-due" type="date" required class="input-field" />
             </div>
             <div class="form-group">
+              <label class="input-label" for="task-start-time">Hora d'inici</label>
+              <input v-model="newTask.startTime" id="task-start-time" type="time" required class="input-field" />
+            </div>
+            <div class="form-group">
+              <label class="input-label" for="task-end-time">Hora de finalització</label>
+              <input v-model="newTask.endTime" id="task-end-time" type="time" required class="input-field" />
+            </div>
+            <div class="form-group">
               <label class="input-label" for="task-priority">Prioritat</label>
               <select v-model="newTask.priority" id="task-priority" required class="input-field">
                 <option>Alta</option>
@@ -107,11 +115,43 @@
               <input v-model="editedTask.due" id="edit-task-due" type="date" required class="input-field" />
             </div>
             <div class="form-group">
+              <label class="input-label" for="edit-task-start-time">Hora d'inici</label>
+              <input v-model="editedTask.startTime" id="edit-task-start-time" type="time" required class="input-field" />
+            </div>
+            <div class="form-group">
+              <label class="input-label" for="edit-task-end-time">Hora de finalització</label>
+              <input v-model="editedTask.endTime" id="edit-task-end-time" type="time" required class="input-field" />
+            </div>
+            <div class="form-group">
               <label class="input-label" for="edit-task-priority">Prioritat</label>
               <select v-model="editedTask.priority" id="edit-task-priority" required class="input-field">
                 <option>Alta</option>
                 <option>Mitja</option>
                 <option>Baixa</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" v-model="editedTask.needsPreparation" />
+                Requereix preparació
+              </label>
+            </div>
+            <div v-if="editedTask.needsPreparation" class="slide-in">
+              <label class="input-label" for="edit-task-preparation">Hores de preparació</label>
+              <input v-model="editedTask.preparation" id="edit-task-preparation" type="number" min="1" class="input-field" />
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" v-model="editedTask.notify" />
+                Notificació
+              </label>
+            </div>
+            <div v-if="editedTask.notify" class="slide-in">
+              <label class="input-label" for="edit-task-notify-hours">Hores abans</label>
+              <select v-model="editedTask.notifyHours" id="edit-task-notify-hours" class="input-field">
+                <option>4</option>
+                <option>24</option>
+                <option>48</option>
               </select>
             </div>
             <div class="modal-footer">
@@ -154,8 +194,8 @@ export default {
   data() {
     return {
       tasks: [
-        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-04-20', completed: false },
-        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-04-22', completed: false },
+        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-04-20', startTime: '09:00', endTime: '12:00', completed: false },
+        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-04-22', startTime: '14:00', endTime: '16:00', completed: false },
       ],
       sortBy: 'priority',
       showTaskModal: false,
@@ -165,6 +205,8 @@ export default {
       newTask: {
         title: '',
         due: '',
+        startTime: '',
+        endTime: '',
         priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
@@ -175,7 +217,13 @@ export default {
         id: null,
         title: '',
         due: '',
+        startTime: '',
+        endTime: '',
         priority: '',
+        needsPreparation: false,
+        preparation: 1,
+        notify: false,
+        notifyHours: 4,
       },
     };
   },
@@ -208,6 +256,8 @@ export default {
       this.newTask = {
         title: '',
         due: '',
+        startTime: '',
+        endTime: '',
         priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
@@ -223,7 +273,7 @@ export default {
     closeEditModal() {
       this.showEditModal = false;
       this.selectedTask = null;
-      this.editedTask = { id: null, title: '', due: '', priority: '' };
+      this.editedTask = { id: null, title: '', due: '', startTime: '', endTime: '', priority: '', needsPreparation: false, preparation: 1, notify: false, notifyHours: 4 };
     },
     saveEditedTask() {
       const taskIndex = this.tasks.findIndex(t => t.id === this.editedTask.id);
@@ -350,9 +400,10 @@ export default {
   border-radius: 16px;
   width: 550px;
   max-width: 95%;
+  max-height: 90vh; /* Limitar al 90% de l'alçada de la pantalla */
+  overflow-y: auto; /* Permetre desplaçament vertical si cal */
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
   animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  overflow: hidden;
 }
 
 .modal-header {
@@ -396,6 +447,8 @@ export default {
 .modal-body {
   padding: 2rem;
   background: #ffffff;
+  max-height: calc(90vh - 100px); /* Ajustar alçada màxima segons el header i footer */
+  overflow-y: auto; /* Permetre desplaçament si el contingut és massa llarg */
 }
 
 .modal-footer {
@@ -410,6 +463,8 @@ export default {
 /* Form Styles */
 .form-group {
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-label {
@@ -417,8 +472,11 @@ export default {
   font-size: 0.95rem;
   font-weight: 500;
   color: #2d3748;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   letter-spacing: 0.01em;
+  line-height: 1.5;
+  overflow: visible;
+  white-space: nowrap;
 }
 
 .checkbox-label {
@@ -427,6 +485,7 @@ export default {
   font-size: 0.95rem;
   color: #2d3748;
   margin-bottom: 0.75rem;
+  line-height: 1.5;
 }
 
 .checkbox-label input {
@@ -534,10 +593,12 @@ export default {
 
   .modal-content {
     width: 90%;
+    max-height: 90vh;
   }
 
   .modal-body {
     padding: 1.5rem;
+    max-height: calc(90vh - 100px);
   }
 
   .btn {
@@ -563,6 +624,7 @@ export default {
 
   .modal-content {
     width: 95%;
+    max-height: 90vh;
   }
 
   .modal-header h3 {
@@ -571,6 +633,7 @@ export default {
 
   .modal-body {
     padding: 1rem;
+    max-height: calc(90vh - 100px);
   }
 
   .btn {

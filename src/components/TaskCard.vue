@@ -3,7 +3,9 @@
     <h3>{{ task.title }}</h3>
     <p>Prioritat: <span :style="{ color: priorityColor }">{{ task.priority }}</span></p>
     <p>Data: {{ task.due }}</p>
+    <p>Hora: {{ task.startTime }} - {{ task.endTime }}</p>
     <p v-if="task.preparation">Preparació: {{ task.preparation }} hores</p>
+    <p v-if="task.notify">Notificació: {{ task.notifyHours }} hores abans</p>
     <div class="button-group">
       <button @click="$emit('edit', task)" class="btn btn-edit">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
