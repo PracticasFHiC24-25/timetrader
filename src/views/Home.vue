@@ -7,14 +7,14 @@
           <img src="@/assets/logo.png" alt="TimeTrader Logo" class="logo" />
           <h1 class="site-title">Time-Trader</h1>
         </div>
-        <button class="hamburger" @click="toggleMobileMenu" aria-label="Obrir menú de navegació">
+        <button class="hamburger" @click="toggleMobileMenu" aria-label="Obrir o tancar menú de navegació">
           <i class="fas" :class="isMobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
         </button>
       </header>
 
       <!-- Navegació -->
       <nav
-        class="nav-tabs animate_animated animate_fadeIn"
+        class="nav-tabs"
         role="navigation"
         aria-label="Menú principal"
         :class="{ 'nav-mobile-open': isMobileMenuOpen }"
@@ -25,7 +25,7 @@
               v-for="(tab, idx) in filteredNavTabs"
               :key="idx"
               role="none"
-              class="col-12 col-md nav-item"
+              class="col-12 col-md nav-item animate_animated animate_slideIn"
               :style="{ animationDelay: `${idx * 0.1}s` }"
             >
               <router-link
@@ -123,7 +123,7 @@ export default {
         { label: 'Què és Time-Trader?', to: '/about' },
         { label: 'Termes i Condicions', to: '/terms' },
         { label: 'Suport i Contacte', to: '/support' },
-        { label: 'Iniciar Sessió', to: '/login'}
+        { label: 'Iniciar Sessió', to: '/login' }
       ]
     };
   },
@@ -143,6 +143,9 @@ export default {
   methods: {
     handleResize() {
       this.windowWidth = window.innerWidth;
+      if (this.windowWidth > 768) {
+        this.isMobileMenuOpen = false;
+      }
     },
     toggleMobileMenu() {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
@@ -168,13 +171,15 @@ export default {
 /* Comú */
 .nav-tab,
 button,
-.cta-button {
+.cta-button,
+.footer a {
   transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .nav-tab:hover,
 button:hover,
-.cta-button:hover {
+.cta-button:hover,
+.footer a:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -238,6 +243,7 @@ button:hover,
   background-color: #ffffff;
   padding: 1rem 0;
   border-bottom: 1px solid #E2E8F0;
+  z-index: 999;
 }
 
 .nav-list {
@@ -292,7 +298,7 @@ button:hover,
 }
 
 .hamburger:hover {
-  transform: rotate(90deg);
+  transform: scale(1.1);
 }
 
 /* Hero Section */
@@ -392,6 +398,27 @@ button:hover,
   background: linear-gradient(90deg, #2B6CB0, #4A90E2);
 }
 
+/* Footer */
+.footer {
+  padding: 2rem;
+  background-color: #1A202C;
+  color: #E2E8F0;
+}
+
+.footer a {
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 0.9rem;
+  color: #A0AEC0;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.footer a:hover {
+  color: #E2E8F0;
+  background-color: #2D3748;
+}
+
 /* Animacions */
 @keyframes slideIn {
   from {
@@ -401,6 +428,17 @@ button:hover,
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes slideInNav {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -439,25 +477,6 @@ button:hover,
   transform: translateX(-20px);
 }
 
-/* Footer */
-.footer {
-  padding: 2rem;
-  background-color: #1A202C;
-  color: #E2E8F0;
-}
-
-.footer a {
-  font-family: 'Open Sans', Arial, sans-serif;
-  font-size: 0.9rem;
-  color: #A0AEC0;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.footer a:hover {
-  color: #E2E8F0;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .hamburger {
@@ -466,27 +485,37 @@ button:hover,
 
   .nav-tabs {
     display: none;
-    position: absolute;
-    top: 80px;
+    position: fixed;
+    top: 90px;
     left: 0;
     width: 100%;
+    height: calc(100vh - 90px);
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 999;
+    z-index: 998;
+    overflow-y: auto;
   }
 
   .nav-tabs.nav-mobile-open {
-    display: flex;
+    display: block;
+    animation: slideInNav 0.3s ease forwards;
+    padding-top: 1rem;
   }
 
   .nav-list {
     flex-direction: column;
     gap: 0;
+    padding: 1.5rem;
+  }
+
+  .nav-item {
+    width: 100%;
   }
 
   .nav-tab {
     padding: 1rem;
     border-bottom: 1px solid #E2E8F0;
+    font-size: 1.1rem;
   }
 
   .site-title {
@@ -521,6 +550,15 @@ button:hover,
     padding: 0.6rem 2rem;
     font-size: 1rem;
   }
+
+  .footer {
+    padding: 1.5rem;
+  }
+
+  .footer a {
+    font-size: 0.85rem;
+    margin: 0.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -530,6 +568,19 @@ button:hover,
 
   .site-title {
     font-size: 1.25rem;
+  }
+
+  .logo {
+    height: 35px;
+  }
+
+  .nav-tab {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .nav-list {
+    padding: 1rem;
   }
 
   .hero-title {
@@ -542,6 +593,21 @@ button:hover,
 
   .testimonial-content {
     padding: 1rem;
+  }
+
+  .cta-button {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .footer {
+    padding: 1rem;
+  }
+
+  .footer a {
+    font-size: 0.8rem;
+    margin: 0.5rem;
+    padding: 0.4rem 0.8rem;
   }
 }
 </style>

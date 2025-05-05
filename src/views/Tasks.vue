@@ -309,7 +309,7 @@ export default {
 /* Floating Action Button */
 .fab {
   position: fixed;
-  bottom: 80px;
+  bottom: 30px;
   right: 18px;
   background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
   border: none;

@@ -211,7 +211,7 @@
           <h2>Política de Cookies</h2>
           <p class="updated">Última actualització: 27 d'abril de 2025</p>
           <p>
-            A <strong>TimeTrader</strong> utilitzem cookies per oferir-te una millor experiència d'usuari. A continuació t'explic
+            A <strong>TimeTrader</strong> utilitzem cookies per oferir-te una millor experiència d'usuari. A continuació s'explica què són les cookies, com les utilitzem i com pots gestionar-les.
           </p>
           <ol>
             <li>Què són les cookies?</li>
