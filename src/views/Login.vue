@@ -1,8 +1,10 @@
-<!-- src/views/Login.vue -->
 <template>
   <div class="login-page">
     <main class="main-content">
       <header class="header">
+        <button class="back-button" @click="$router.back()" aria-label="Tornar enrere">
+          ←
+        </button>
         <h1>Iniciar Sessió</h1>
       </header>
 
@@ -80,8 +82,13 @@ export default {
 }
 
 .header {
-  text-align: center;
+  position: relative;
   margin-bottom: 20px;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header h1 {
@@ -89,6 +96,23 @@ export default {
   color: #2c3e50;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
+  margin: 0;
+}
+
+.back-button {
+  position: absolute;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #4A90E2;
+  padding: 5px;
+  line-height: 1;
+}
+
+.back-button:hover {
+  color: #3a78c2;
 }
 
 .login-section {
@@ -179,6 +203,11 @@ export default {
 
   .login-section {
     padding: 20px;
+  }
+
+  .back-button {
+    font-size: 1.5rem;
+    left: 10px;
   }
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
   <form @submit.prevent="submitTask" class="card">
-    <h2>Nova Tasca</h2>
     <label>Títol</label>
     <input v-model="task.title" required />
     <label>Data</label>

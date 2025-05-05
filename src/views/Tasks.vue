@@ -131,7 +131,11 @@ export default {
         const priorityOrder = { 'Alta': 1, 'Mitja': 2, 'Baixa': 3 };
         return tasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
       }
-      return tasks.sort((a, b) => new Date(a.due) - new Date(b.due));
+      return tasks.sort((a, b) => {
+        const dateA = new Date(a.due + 'T00:00:00');
+        const dateB = new Date(b.due + 'T00:00:00');
+        return dateA - dateB;
+      });
     },
   },
   mounted() {
@@ -153,13 +157,34 @@ export default {
       this.saveTasks();
     },
     openTaskModal() {
+      this.newTask = {
+        title: '',
+        due: '',
+        startTime: '',
+        endTime: '',
+        priority: 'Mitja',
+        needsPreparation: false,
+        preparation: 1,
+        notify: false,
+        notifyHours: 4,
+        completed: false,
+      };
       this.showTaskModal = true;
     },
     closeTaskModal() {
       this.showTaskModal = false;
-      this.resetForm();
     },
     submitTask(task) {
+      if (!task.title || !task.due || !task.startTime || !task.endTime) {
+        alert("Si us plau, omple tots els camps obligatoris.");
+        return;
+      }
+      const startDateTime = new Date(`${task.due}T${task.startTime}`);
+      const endDateTime = new Date(`${task.due}T${task.endTime}`);
+      if (endDateTime <= startDateTime) {
+        alert("L'hora de finalització ha de ser posterior a l'hora d'inici.");
+        return;
+      }
       this.addTask(task);
       this.closeTaskModal();
     },
