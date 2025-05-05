@@ -13,6 +13,7 @@ import Calendari from '@/views/Calendari.vue';
 import Profile from '../views/Profile.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue'; //  Importem el component de registre
+import About from '@/views/About.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -32,7 +33,8 @@ const routes = [
   { path: '/faq', component: FAQ },
   { path: '/profile', component: Profile },
   { path: '/login', component: Login },
-  { path: '/register', component: Register }, // ✅ Nova ruta per al registre
+  { path: '/register', component: Register },
+  { path: '/about', component: About },
 ];
 
 const router = createRouter({

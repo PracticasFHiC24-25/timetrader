@@ -1,4 +1,3 @@
-<!-- src/components/TaskForm.vue -->
 <template>
   <form @submit.prevent="submitTask" class="card">
     <h2>Nova Tasca</h2>
@@ -6,6 +5,10 @@
     <input v-model="task.title" required />
     <label>Data</label>
     <input v-model="task.due" type="date" required />
+    <label>Hora d'inici</label>
+    <input v-model="task.startTime" type="time" required />
+    <label>Hora de finalització</label>
+    <input v-model="task.endTime" type="time" required />
     <label>Prioritat</label>
     <select v-model="task.priority" required>
       <option>Alta</option>
@@ -44,6 +47,8 @@ export default {
       task: {
         title: '',
         due: '',
+        startTime: '', // Camp per l'hora d'inici
+        endTime: '',   // Camp per l'hora de finalització
         priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
@@ -61,6 +66,8 @@ export default {
       this.task = {
         title: '',
         due: '',
+        startTime: '', // Reinicia l'hora d'inici
+        endTime: '',   // Reinicia l'hora de finalització
         priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
