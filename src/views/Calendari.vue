@@ -186,6 +186,15 @@ export default {
     },
   },
   methods: {
+    saveTasks() {
+      sessionStorage.setItem('tasks', JSON.stringify(this.tasks));
+    },
+    loadTasks() {
+      const storedTasks = JSON.parse(sessionStorage.getItem('tasks') || '[]');
+      if (storedTasks.length > 0) {
+        this.tasks = storedTasks;
+      }
+    },
     previousPeriod() {
       if (this.viewMode === 'month') {
         if (this.selectedMonth === 0) {
@@ -342,6 +351,7 @@ export default {
     },
   },
   mounted() {
+    this.loadTasks(); // Carregar tasques des de sessionStorage
     this.checkScreenSize();
     window.addEventListener('resize', this.checkScreenSize);
   },

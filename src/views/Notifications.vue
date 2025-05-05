@@ -8,18 +8,18 @@
     <ul class="notification-list">
       <li
         v-for="(notification, idx) in notifications"
-        :key="notification.taskId"
+        :key="notification.id"
         class="notification-item animate_animated animate_fadeInUp"
         :style="{ animationDelay: `${idx * 0.1}s` }"
       >
         <span>{{ taskTitle(notification.taskId) }} - {{ notification.hours }}h abans</span>
         <div class="button-group">
-          <button @click="openModal(notification.taskId)" class="edit-btn" aria-label="Editar notificació">
+          <button @click="openModal(notification)" class="edit-btn" aria-label="Editar notificació">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
             </svg>
           </button>
-          <button @click="openDeleteModal(notification.taskId)" class="delete-btn" aria-label="Esborrar notificació">
+          <button @click="openDeleteModal(notification)" class="delete-btn" aria-label="Esborrar notificació">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
             </svg>
@@ -40,7 +40,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <p class="task-label">Tasca: <span>{{ taskTitle(selectedTaskId) }}</span></p>
+          <p class="task-label">Tasca: <span>{{ taskTitle(selectedNotification.taskId) }}</span></p>
           <label class="input-label" for="edit-hours">Hores abans</label>
           <select v-model="editedHours" id="edit-hours" class="input-field">
             <option>4</option>
@@ -67,7 +67,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>Estàs segur que vols esborrar la notificació per "{{ taskTitle(selectedTaskId) }}"?</p>
+          <p>Estàs segur que vols esborrar la notificació per "{{ taskTitle(selectedNotification.taskId) }}"?</p>
         </div>
         <div class="modal-footer">
           <button @click="closeDeleteModal" class="btn btn-secondary">No</button>
@@ -91,12 +91,18 @@ export default {
       ],
       notifications: [],
       showModal: false,
-      selectedTaskId: null,
+      selectedNotification: null,
       editedHours: 4,
       showDeleteModal: false,
     };
   },
+  mounted() {
+    this.loadNotifications();
+  },
   methods: {
+    loadNotifications() {
+      this.notifications = JSON.parse(sessionStorage.getItem('notifications') || '[]');
+    },
     saveNotification(notification) {
       this.notifications.push(notification);
     },
@@ -104,31 +110,38 @@ export default {
       const task = this.tasks.find(t => t.id === taskId);
       return task ? task.title : 'Tarea desconocida';
     },
-    openModal(taskId) {
-      this.selectedTaskId = taskId;
-      const notification = this.notifications.find(n => n.taskId === taskId);
+    openModal(notification) {
+      this.selectedNotification = notification;
       this.editedHours = notification.hours;
       this.showModal = true;
     },
     closeModal() {
       this.showModal = false;
+      this.selectedNotification = null;
     },
     saveEditedNotification() {
-      const notification = this.notifications.find(n => n.taskId === this.selectedTaskId);
-      if (notification) {
-        notification.hours = this.editedHours;
+      let notifications = JSON.parse(sessionStorage.getItem('notifications') || '[]');
+      const index = notifications.findIndex(n => n.id === this.selectedNotification.id);
+      if (index !== -1) {
+        notifications[index].hours = this.editedHours;
+        sessionStorage.setItem('notifications', JSON.stringify(notifications));
+        this.loadNotifications();
       }
       this.closeModal();
     },
-    openDeleteModal(taskId) {
-      this.selectedTaskId = taskId;
+    openDeleteModal(notification) {
+      this.selectedNotification = notification;
       this.showDeleteModal = true;
     },
     closeDeleteModal() {
       this.showDeleteModal = false;
+      this.selectedNotification = null;
     },
     confirmDelete() {
-      this.notifications = this.notifications.filter(n => n.taskId !== this.selectedTaskId);
+      let notifications = JSON.parse(sessionStorage.getItem('notifications') || '[]');
+      notifications = notifications.filter(n => n.id !== this.selectedNotification.id);
+      sessionStorage.setItem('notifications', JSON.stringify(notifications));
+      this.loadNotifications();
       this.closeDeleteModal();
     },
   },
@@ -324,7 +337,9 @@ export default {
 }
 
 .modal-body {
-  padding: 1.5rem;
+  padding: 1.5rem
+
+;
 }
 
 .task-label {

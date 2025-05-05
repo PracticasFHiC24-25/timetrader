@@ -36,15 +36,15 @@ export default {
         alert('Si us plau, selecciona una tasca abans de guardar.');
         return;
       }
-      alert(`Notificació guardada per ${this.taskTitle} ${this.notification.hours}h abans`);
-      this.$emit('save', { ...this.notification });
+      const notification = { ...this.notification, id: Date.now() }; // Añadir ID único
+      let notifications = JSON.parse(sessionStorage.getItem('notifications') || '[]');
+      notifications.push(notification);
+      sessionStorage.setItem('notifications', JSON.stringify(notifications));
+      this.$emit('save', notification);
+      this.notification = { taskId: null, hours: 4 }; // Reiniciar formulario
     },
     testNotification() {
       alert('Notificació de proba enviada');
-    },
-    taskTitle() {
-      const task = this.tasks.find(t => t.id === this.notification.taskId);
-      return task ? task.title : '';
     },
   },
 };
