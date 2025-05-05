@@ -1,0 +1,391 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    min-width: 320px;
+}
+
+:root {
+    --primary: #4A90E2;
+    --secondary: #F5F6FA;
+    --accent-green: #50C878;
+    --accent-red: #FF6B6B;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+}
+
+body {
+    font-family: 'Montserrat';
+    background-color: var(--secondary);
+    color: var(--text-primary);
+}
+
+h1 {
+    font-family: 'Montserrat';
+    font-size: 24px;
+    font-weight: 900;
+    margin: 10px 10px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-family: 'Montserrat';
+    font-size: 20px;
+    font-weight: 700;
+    margin: 10px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+div {
+    text-align: justify;
+}
+
+button {
+    font-family: 'Montserrat';
+    font-size: 14px;
+    text-decoration: none;
+    color: #4A90E2;
+    border: none;
+    border-radius: 4px;
+    margin: 2px;
+    width: 32%;
+}
+
+p {
+    font-family: 'Montserrat';
+    font-size: 16px;
+    line-height: 1.5em;
+    font-weight: 400;
+    margin: 10px;
+    color: #000;
+}
+
+li {
+    font-family: 'Montserrat';
+    font-size: 16px;
+    line-height: 1.5em;
+    font-weight: 700;
+    color: #000;
+}
+
+ul {
+    font-family: 'Montserrat';
+    line-height: 1.5em;
+    font-weight: 400;
+    color: #000;
+    margin: 0;
+}
+
+.card {
+    border-radius: 8px;
+    border: 1px solid #E0E0E0;
+    padding: 16px;
+    background: #FFFFFF;
+}
+
+/* Animacions per al canvi de mes */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+
+/* Estils generals */
+.home-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    padding: 32px;
+    width: 100%;
+    background: #F5F6FA;
+    flex-grow: 1;
+}
+
+/* Capçalera amb logo i títol */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+.logo {
+    height: 40px;
+}
+
+.site-title {
+    font-family: 'Montserrat';
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.5em;
+    margin-bottom: 16px;
+    color: #333333;
+}
+
+/* Barra de navegació */
+.nav-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 32px;
+    padding-bottom: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+    justify-content: center;
+}
+
+.nav-tab {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    text-decoration: none;
+    color: #4A90E2;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-tab:hover,
+.nav-tab.router-link-active {
+    background-color: rgba(74, 144, 226, 0.1);
+    transform: scale(1.05);
+}
+
+/* Secció del lema */
+.slogan-section {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.slogan-section h2 {
+    font-family: 'Montserrat';
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.5em;
+    margin-bottom: 16px;
+    color: #333333;
+}
+
+/* Secció del calendari */
+.calendar-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.calendar-wrapper {
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.control-btn {
+    background: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.control-btn:hover {
+    background-color: #3a78c2;
+    transform: scale(1.1);
+}
+
+.calendar-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #333333;
+}
+
+.calendar {
+    display: block; /* Eliminem la graella del contenidor .calendar */
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.header-day {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    padding: 6px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    color: #666666;
+}
+
+.calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    min-height: 240px; /* Assegurem una alçada mínima per a la graella */
+}
+
+.calendar-day {
+    position: relative;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.calendar-day.empty {
+    border: none;
+    background: transparent;
+    cursor: default;
+}
+
+.day-number {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    color: #333333;
+}
+
+.calendar-day:hover {
+    background-color: rgba(74, 144, 226, 0.1);
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day:focus {
+    outline: 2px solid #4A90E2;
+    outline-offset: 2px;
+}
+
+.calendar-day.current-day {
+    background-color: #4A90E2;
+    border-color: #4A90E2;
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+    animation: pulse 1.5s infinite;
+}
+
+.calendar-day.current-day .day-number {
+    color: white;
+}
+
+.calendar-day.event-day .event-indicator {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 10px;
+    height: 10px;
+    background-color: #50C878;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(80, 200, 120, 0.5);
+}
+
+/* Animació per al dia actual */
+@keyframes pulse {
+    0% {
+    box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.5);
+    }
+    70% {
+    box-shadow: 0 0 0 10px rgba(74, 144, 226, 0);
+    }
+    100% {
+    box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
+    }
+}
+
+/* Footer */
+.footer {
+    padding: 16px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.footer a {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: #4A90E2;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: #3a78c2;
+}
+
+/* Responsivitat */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 16px;
+    }
+
+    .nav-tabs {
+        gap: 16px;
+    }
+
+    .logo {
+        height: 32px;
+    }
+
+    .site-title {
+        font-size: 20px;
+    }
+
+    .calendar-day {
+        min-height: 36px;
+    }
+
+    .day-number {
+        font-size: 16px;
+    }
+
+    .header-day {
+        font-size: 12px;
+        padding: 4px;
+    }
+}
+
+.support-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    padding: 32px;
+    width: 100%;
+    background: #f9f9f9;
+    flex-grow: 1;
+    text-align: center;
+}
