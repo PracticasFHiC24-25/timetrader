@@ -80,6 +80,9 @@ export default {
     },
   },
   methods: {
+    saveTasks() {
+      sessionStorage.setItem('tasks', JSON.stringify(this.tasks));
+    },
     previousMonth() {
       if (this.selectedMonth === 0) {
         this.selectedMonth = 11;
@@ -103,16 +106,17 @@ export default {
       this.useShortDays = window.innerWidth < 768;
     },
     hasTask(day) {
-      const fullDate = new Date(this.selectedYear, this.selectedMonth, day).toISOString().split('T')[0];
+      const fullDate = new Date(Date.UTC(this.selectedYear, this.selectedMonth, day)).toISOString().split('T')[0];
       return this.tasks.some(task => task.due === fullDate && !task.completed);
     },
     getTaskTitle(day) {
-      const fullDate = new Date(this.selectedYear, this.selectedMonth, day).toISOString().split('T')[0];
+      const fullDate = new Date(Date.UTC(this.selectedYear, this.selectedMonth, day)).toISOString().split('T')[0];
       const task = this.tasks.find(task => task.due === fullDate && !task.completed);
       return task ? task.title : '';
     },
   },
   mounted() {
+    this.saveTasks(); // Guardar tareas iniciales en sessionStorage
     this.checkScreenSize();
     window.addEventListener('resize', this.checkScreenSize);
   },

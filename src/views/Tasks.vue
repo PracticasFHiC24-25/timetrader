@@ -35,52 +35,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="submitTask">
-            <div class="form-group">
-              <label class="input-label" for="task-title">Títol</label>
-              <input v-model="newTask.title" id="task-title" required class="input-field" />
-            </div>
-            <div class="form-group">
-              <label class="input-label" for="task-due">Data</label>
-              <input v-model="newTask.due" id="task-due" type="date" required class="input-field" />
-            </div>
-            <div class="form-group">
-              <label class="input-label" for="task-priority">Prioritat</label>
-              <select v-model="newTask.priority" id="task-priority" required class="input-field">
-                <option>Alta</option>
-                <option>Mitja</option>
-                <option>Baixa</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="checkbox-label">
-                <input type="checkbox" v-model="newTask.needsPreparation" />
-                Requereix preparació
-              </label>
-            </div>
-            <div v-if="newTask.needsPreparation" class="slide-in">
-              <label class="input-label" for="task-preparation">Hores de preparació</label>
-              <input v-model="newTask.preparation" id="task-preparation" type="number" min="1" class="input-field" />
-            </div>
-            <div class="form-group">
-              <label class="checkbox-label">
-                <input type="checkbox" v-model="newTask.notify" />
-                Notificació
-              </label>
-            </div>
-            <div v-if="newTask.notify" class="slide-in">
-              <label class="input-label" for="task-notify-hours">Hores abans</label>
-              <select v-model="newTask.notifyHours" id="task-notify-hours" class="input-field">
-                <option>4</option>
-                <option>24</option>
-                <option>48</option>
-              </select>
-            </div>
-            <div class="modal-footer">
-              <button type="button" @click="closeTaskModal" class="btn btn-secondary">Cancelar</button>
-              <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-          </form>
+          <TaskForm @submit="submitTask" @cancel="closeTaskModal" />
         </div>
       </div>
     </div>
@@ -107,11 +62,43 @@
               <input v-model="editedTask.due" id="edit-task-due" type="date" required class="input-field" />
             </div>
             <div class="form-group">
+              <label class="input-label" for="edit-task-start-time">Hora d'inici</label>
+              <input v-model="editedTask.startTime" id="edit-task-start-time" type="time" required class="input-field" />
+            </div>
+            <div class="form-group">
+              <label class="input-label" for="edit-task-end-time">Hora de finalització</label>
+              <input v-model="editedTask.endTime" id="edit-task-end-time" type="time" required class="input-field" />
+            </div>
+            <div class="form-group">
               <label class="input-label" for="edit-task-priority">Prioritat</label>
               <select v-model="editedTask.priority" id="edit-task-priority" required class="input-field">
                 <option>Alta</option>
                 <option>Mitja</option>
                 <option>Baixa</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" v-model="editedTask.needsPreparation" />
+                Requereix preparació
+              </label>
+            </div>
+            <div v-if="editedTask.needsPreparation" class="slide-in">
+              <label class="input-label" for="edit-task-preparation">Hores de preparació</label>
+              <input v-model="editedTask.preparation" id="edit-task-preparation" type="number" min="1" class="input-field" />
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" v-model="editedTask.notify" />
+                Notificació
+              </label>
+            </div>
+            <div v-if="editedTask.notify" class="slide-in">
+              <label class="input-label" for="edit-task-notify-hours">Hores abans</label>
+              <select v-model="editedTask.notifyHours" id="edit-task-notify-hours" class="input-field">
+                <option>4</option>
+                <option>24</option>
+                <option>48</option>
               </select>
             </div>
             <div class="modal-footer">
@@ -148,15 +135,13 @@
 
 <script>
 import TaskCard from '../components/TaskCard.vue';
+import TaskForm from '../components/TaskForm.vue';
 
 export default {
-  components: { TaskCard },
+  components: { TaskCard, TaskForm },
   data() {
     return {
-      tasks: [
-        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-04-20', completed: false },
-        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-04-22', completed: false },
-      ],
+      tasks: [],
       sortBy: 'priority',
       showTaskModal: false,
       showEditModal: false,
@@ -165,17 +150,27 @@ export default {
       newTask: {
         title: '',
         due: '',
+        startTime: '',
+        endTime: '',
         priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
         notify: false,
         notifyHours: 4,
+        completed: false,
       },
       editedTask: {
         id: null,
         title: '',
         due: '',
+        startTime: '',
+        endTime: '',
         priority: '',
+        needsPreparation: false,
+        preparation: 1,
+        notify: false,
+        notifyHours: 4,
+        completed: false,
       },
     };
   },
@@ -189,9 +184,19 @@ export default {
       return tasks.sort((a, b) => new Date(a.due) - new Date(b.due));
     },
   },
+  mounted() {
+    this.loadTasks();
+  },
   methods: {
+    loadTasks() {
+      this.tasks = JSON.parse(sessionStorage.getItem('tasks') || '[]');
+    },
+    saveTasks() {
+      sessionStorage.setItem('tasks', JSON.stringify(this.tasks));
+    },
     addTask(task) {
       this.tasks.push(task);
+      this.saveTasks();
     },
     openTaskModal() {
       this.showTaskModal = true;
@@ -200,19 +205,22 @@ export default {
       this.showTaskModal = false;
       this.resetForm();
     },
-    submitTask() {
-      this.addTask({ ...this.newTask, id: Date.now(), completed: false });
+    submitTask(task) {
+      this.addTask(task);
       this.closeTaskModal();
     },
     resetForm() {
       this.newTask = {
         title: '',
         due: '',
+        startTime: '',
+        endTime: '',
         priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
         notify: false,
         notifyHours: 4,
+        completed: false,
       };
     },
     openEditModal(task) {
@@ -223,12 +231,31 @@ export default {
     closeEditModal() {
       this.showEditModal = false;
       this.selectedTask = null;
-      this.editedTask = { id: null, title: '', due: '', priority: '' };
+      this.editedTask = {
+        id: null,
+        title: '',
+        due: '',
+        startTime: '',
+        endTime: '',
+        priority: '',
+        needsPreparation: false,
+        preparation: 1,
+        notify: false,
+        notifyHours: 4,
+        completed: false,
+      };
     },
     saveEditedTask() {
+      const startDateTime = new Date(`${this.editedTask.due}T${this.editedTask.startTime}`);
+      const endDateTime = new Date(`${this.editedTask.due}T${this.editedTask.endTime}`);
+      if (endDateTime <= startDateTime) {
+        alert('L\'hora de finalització ha de ser posterior a l\'hora d\'inici.');
+        return;
+      }
       const taskIndex = this.tasks.findIndex(t => t.id === this.editedTask.id);
       if (taskIndex !== -1) {
         this.tasks[taskIndex] = { ...this.tasks[taskIndex], ...this.editedTask };
+        this.saveTasks();
       }
       this.closeEditModal();
     },
@@ -242,6 +269,7 @@ export default {
     },
     confirmDelete() {
       this.tasks = this.tasks.filter(t => t.id !== this.selectedTask.id);
+      this.saveTasks();
       this.closeDeleteModal();
     },
     cancelTask() {

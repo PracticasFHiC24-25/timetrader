@@ -47,32 +47,42 @@ export default {
       task: {
         title: '',
         due: '',
-        startTime: '', // Camp per l'hora d'inici
-        endTime: '',   // Camp per l'hora de finalització
+        startTime: '',
+        endTime: '',
         priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
         notify: false,
         notifyHours: 4,
+        completed: false,
       },
     };
   },
   methods: {
     submitTask() {
-      this.$emit('submit', { ...this.task, id: Date.now() });
+      // Validar que endTime sea posterior a startTime
+      const startDateTime = new Date(`${this.task.due}T${this.task.startTime}`);
+      const endDateTime = new Date(`${this.task.due}T${this.task.endTime}`);
+      if (endDateTime <= startDateTime) {
+        alert('L\'hora de finalització ha de ser posterior a l\'hora d\'inici.');
+        return;
+      }
+      const task = { ...this.task, id: Date.now() };
+      this.$emit('submit', task);
       this.resetForm();
     },
     resetForm() {
       this.task = {
         title: '',
         due: '',
-        startTime: '', // Reinicia l'hora d'inici
-        endTime: '',   // Reinicia l'hora de finalització
+        startTime: '',
+        endTime: '',
         priority: 'Mitja',
         needsPreparation: false,
         preparation: 1,
         notify: false,
         notifyHours: 4,
+        completed: false,
       };
     },
   },
