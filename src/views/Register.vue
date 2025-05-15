@@ -65,11 +65,11 @@ export default {
       
       // Forçar la redirecció amb try-catch per capturar errors
       try {
-        this.$router.push('/agenda').then(() => {
-          console.log('Redirecció a /agenda correcta');
+        this.$router.push('/login').then(() => {
+          console.log('Redirecció a /logim correcta');
         }).catch(err => {
           console.error('Error en la redirecció:', err);
-          this.error = 'Error al redirigir. Comprova la ruta /agenda.';
+          this.error = 'Error al redirigir. Comprova la ruta /login.';
         });
       } catch (err) {
         console.error('Excepció durant la redirecció:', err);

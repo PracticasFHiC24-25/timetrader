@@ -88,7 +88,6 @@ export default {
       localStorage.setItem('darkMode', this.settings.darkMode);
       localStorage.setItem('language', this.settings.language);
 
-      // Aplicar canvis a la pàgina
       document.body.style.backgroundColor = this.settings.backgroundColor;
       document.querySelectorAll('.save-button').forEach(btn => {
         btn.style.backgroundColor = this.settings.buttonColor;
@@ -100,7 +99,6 @@ export default {
     }
   },
   mounted() {
-    // Aplicar els valors guardats quan es carrega la pàgina
     document.body.style.backgroundColor = this.settings.backgroundColor;
     document.querySelectorAll('.save-button').forEach(btn => {
       btn.style.backgroundColor = this.settings.buttonColor;
@@ -113,10 +111,8 @@ export default {
 
 <style scoped>
 .settings-page {
-  font-family: 'Montserrat', sans-serif;
-  padding: 20px;
+  padding: 16px;
   box-sizing: border-box;
-  width: 100%;
 }
 
 .settings-header {
@@ -127,6 +123,7 @@ export default {
   font-size: 1.8rem;
   color: #2c3e50;
   font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .settings-section {
@@ -135,6 +132,8 @@ export default {
   border-radius: 8px;
   border: 1px solid #e0e0e0;
   max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .settings-form {
@@ -154,6 +153,7 @@ export default {
   color: #34495e;
   width: 150px;
   font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .input-wrapper {
@@ -216,6 +216,7 @@ export default {
   color: #2ecc71;
   font-size: 0.9rem;
   margin-top: 10px;
+  font-family: 'Open Sans', sans-serif;
 }
 
 /* Estils per al mode fosc */
