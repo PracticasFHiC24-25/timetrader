@@ -15,8 +15,8 @@
         <li>
           <router-link
             to="/agenda/calendari"
-            @click="$emit('update:modelValue', false)"
-            :aria-current="$route.path === '/agenda/calendari' ? 'page' : undefined"
+            @click="updateSection('calendari')"
+            :class="{ active: selectedSection === 'calendari' }"
           >
             <i class="fas fa-calendar"></i> Calendari
           </router-link>
@@ -24,8 +24,8 @@
         <li>
           <router-link
             to="/agenda/tasks"
-            @click="$emit('update:modelValue', false)"
-            :aria-current="$route.path === '/agenda/tasks' ? 'page' : undefined"
+            @click="updateSection('tasks')"
+            :class="{ active: selectedSection === 'tasks' }"
           >
             <i class="fas fa-check"></i> Tasques i Events
           </router-link>
@@ -33,8 +33,8 @@
         <li>
           <router-link
             to="/agenda/notifications"
-            @click="$emit('update:modelValue', false)"
-            :aria-current="$route.path === '/agenda/notifications' ? 'page' : undefined"
+            @click="updateSection('notifications')"
+            :class="{ active: selectedSection === 'notifications' }"
           >
             <i class="fas fa-bell"></i> Notificacions
           </router-link>
@@ -42,8 +42,8 @@
         <li>
           <router-link
             to="/smart-planning"
-            @click="$emit('update:modelValue', false)"
-            :aria-current="$route.path === '/smart-planning' ? 'page' : undefined"
+            @click="updateSection('smart-planning')"
+            :class="{ active: selectedSection === 'smart-planning' }"
           >
             <i class="fas fa-brain"></i> Planificació Intel·ligent
           </router-link>
@@ -51,8 +51,8 @@
         <li>
           <router-link
             to="/settings"
-            @click="$emit('update:modelValue', false)"
-            :aria-current="$route.path === '/settings' ? 'page' : undefined"
+            @click="updateSection('settings')"
+            :class="{ active: selectedSection === 'settings' }"
           >
             <i class="fas fa-cog"></i> Configuració
           </router-link>
@@ -75,19 +75,35 @@ import { isAuthenticated, logout } from '../auth';
 export default {
   props: {
     modelValue: Boolean,
+    selectedSection: String
   },
+  emits: ['update:modelValue', 'updateSection'],
   computed: {
     isAuthenticated() {
       return isAuthenticated.value;
     }
   },
   methods: {
+    updateSection(section) {
+      this.$emit('updateSection', section);
+      this.$emit('update:modelValue', false);
+    },
     handleLogout() {
       if (confirm('Segur que vols tancar sessió?')) {
         logout();
         this.$emit('update:modelValue', false);
-        this.$router.push('/');
+        this.$router.push('/login');
       }
+    }
+  },
+  watch: {
+    '$route.path'(newPath) {
+      // Sincronitzem selectedSection quan canvia la ruta
+      if (newPath === '/agenda/calendari') this.$emit('updateSection', 'calendari');
+      else if (newPath === '/agenda/tasks') this.$emit('updateSection', 'tasks');
+      else if (newPath === '/agenda/notifications') this.$emit('updateSection', 'notifications');
+      else if (newPath === '/smart-planning') this.$emit('updateSection', 'smart-planning');
+      else if (newPath === '/agenda/settings') this.$emit('updateSection', 'settings');
     }
   }
 };
@@ -142,7 +158,7 @@ export default {
   background: var(--secondary);
 }
 
-.sidebar a[aria-current="page"] {
+.sidebar a.active {
   background: #4A90E2;
   color: #FFFFFF;
   font-weight: 600;

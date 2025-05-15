@@ -1,6 +1,7 @@
+<!-- src/views/Agenda.vue -->
 <template>
   <div class="agenda">
-    <Sidebar v-model="isSidebarOpen" />
+    <Sidebar v-model="isSidebarOpen" :selectedSection="selectedSection" @updateSection="selectSection" />
     <div class="content container">
       <!-- Botón hamburguesa dentro del contenido para alinearlo al inicio -->
       <button
@@ -25,21 +26,33 @@ export default {
   data() {
     return {
       isSidebarOpen: false,
+      selectedSection: 'calendari' // Seleccionem "Calendari" per defecte
     };
   },
+  methods: {
+    selectSection(section) {
+      this.selectedSection = section;
+    }
+  },
+  mounted() {
+    // Redirigim a /agenda/calendari per defecte
+    if (this.$route.path === '/agenda' || this.$route.path === '/agenda/') {
+      this.$router.push('/agenda/calendari');
+    }
+  }
 };
 </script>
 
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap');
 
-<style scoped>
 .menu-toggle-inside {
   position: absolute;
   top: 32px;
   left: 38px;
   background: none;
   border: none;
-  padding: 0; /* Elimina el espacio extra */
+  padding: 0;
   font-size: 24px;
   line-height: 1;
   z-index: 1100;
@@ -50,7 +63,6 @@ export default {
   justify-content: center;
 }
 
-/* Ocultar en pantallas grandes, mostrar en móvil */
 @media (min-width: 769px) {
   .menu-toggle-inside {
     display: none;
@@ -70,7 +82,6 @@ export default {
   max-width: 100%;
   width: auto;
 }
-
 
 @media (max-width: 768px) {
   .content {

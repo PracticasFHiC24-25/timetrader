@@ -1,3 +1,4 @@
+<!-- src/views/Login.vue -->
 <template>
   <div class="login-page">
     <main class="main-content">
@@ -56,12 +57,16 @@ export default {
   },
   methods: {
     handleLogin() {
-      if (this.email === 'user@example.com' && this.password === 'password123') {
-        login();
-        this.$router.push('/agenda/calendari');
-      } else {
-        this.errorMessage = 'Correu electrònic o contrasenya incorrectes.';
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(user => user.email === this.email && user.password === this.password);
+      if (!user) {
+        this.errorMessage = 'Correu o contrasenya incorrectes. Torna-ho a provar.';
+        return;
       }
+
+      login(user); // Cridem la funció login amb les dades de l'usuari
+      alert('Inici de sessió correcte!');
+      this.$router.push('/agenda/calendari');
     }
   }
 };
