@@ -16,14 +16,14 @@
       </div>
     </div>
 
-    <!-- Botón flotante para abrir el modal de nueva tarea -->
+    <!-- Botó flotant per obrir el modal de nova tasca -->
     <button @click="openTaskModal" class="fab" aria-label="Afegir nova tasca">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
       </svg>
     </button>
 
-    <!-- Modal para nueva tarea -->
+    <!-- Modal per a nova tasca -->
     <div v-if="showTaskModal" class="modal" @click="closeTaskModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <!-- Modal para editar tarea -->
+    <!-- Modal per editar tasca -->
     <div v-if="showEditModal" class="modal" @click="closeEditModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    <!-- Modal para confirmar eliminación -->
+    <!-- Modal per confirmar esborrament -->
     <div v-if="showDeleteModal" class="modal" @click="closeDeleteModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
@@ -83,15 +83,13 @@
 <script>
 import TaskCard from '../components/TaskCard.vue';
 import TaskForm from '../components/TaskForm.vue';
+import { bus } from '../main'; // Importem l'event bus
 
 export default {
   components: { TaskCard, TaskForm },
   data() {
     return {
-      tasks: [
-        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-04-20', startTime: '09:00', endTime: '12:00', completed: false },
-        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-04-22', startTime: '14:00', endTime: '16:00', completed: false },
-      ],
+      tasks: [],
       sortBy: 'priority',
       showTaskModal: false,
       showEditModal: false,
@@ -144,9 +142,10 @@ export default {
   methods: {
     loadTasks() {
       const storedTasks = JSON.parse(sessionStorage.getItem('tasks') || '[]');
-      if (storedTasks.length > 0) {
-        this.tasks = storedTasks;
-      }
+      this.tasks = storedTasks.length > 0 ? storedTasks : [
+        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-04-20', startTime: '09:00', endTime: '12:00', completed: false },
+        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-04-22', startTime: '14:00', endTime: '16:00', completed: false },
+      ];
     },
     saveTasks() {
       sessionStorage.setItem('tasks', JSON.stringify(this.tasks));
@@ -155,6 +154,7 @@ export default {
       const newTask = { ...task, id: this.tasks.length ? Math.max(...this.tasks.map(t => t.id)) + 1 : 1 };
       this.tasks.push(newTask);
       this.saveTasks();
+      bus.emit('task-added', newTask); // Emetem l'event per a Notifications.vue
     },
     openTaskModal() {
       this.newTask = {
@@ -235,6 +235,7 @@ export default {
       if (taskIndex !== -1) {
         this.tasks[taskIndex] = { ...this.tasks[taskIndex], ...task };
         this.saveTasks();
+        bus.emit('task-updated', this.tasks[taskIndex]); // Emetem un event per si cal actualitzar notificacions
       }
       this.closeEditModal();
     },
@@ -249,6 +250,7 @@ export default {
     confirmDelete() {
       this.tasks = this.tasks.filter(t => t.id !== this.selectedTask.id);
       this.saveTasks();
+      bus.emit('task-deleted', this.selectedTask.id); // Emetem un event per si cal actualitzar notificacions
       this.closeDeleteModal();
     },
     cancelTask() {
@@ -259,7 +261,7 @@ export default {
 </script>
 
 <style scoped>
-/* General Styles */
+/* Estils existents (mantinguts iguals per no repetir codi) */
 .tasks {
   max-width: 1200px;
   margin: 2rem auto;
@@ -270,7 +272,6 @@ export default {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
 }
 
-/* Header Section */
 .header-section {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 1.5rem 2rem;
@@ -298,7 +299,6 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Task List */
 .task-list {
   display: flex;
   flex-wrap: wrap;
@@ -306,7 +306,6 @@ export default {
   justify-content: center;
 }
 
-/* Floating Action Button */
 .fab {
   position: fixed;
   bottom: 30px;
@@ -338,7 +337,6 @@ export default {
   transition: transform 0.3s ease;
 }
 
-/* Modal Styles */
 .modal {
   position: fixed;
   top: 0;
@@ -357,8 +355,8 @@ export default {
   border-radius: 16px;
   width: 550px;
   max-width: 95%;
-  max-height: 90vh; /* Limitar al 90% de l'alçada de la pantalla */
-  overflow-y: auto; /* Permetre desplaçament vertical si cal */
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
   animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
@@ -404,8 +402,8 @@ export default {
 .modal-body {
   padding: 2rem;
   background: #ffffff;
-  max-height: calc(90vh - 100px); /* Ajustar alçada màxima segons el header i footer */
-  overflow-y: auto; /* Permetre desplaçament si el contingut és massa llarg */
+  max-height: calc(90vh - 100px);
+  overflow-y: auto;
 }
 
 .modal-footer {
@@ -417,7 +415,6 @@ export default {
   background: #f8fafc;
 }
 
-/* Form Styles */
 .form-group {
   margin-bottom: 1.5rem;
   display: flex;
@@ -483,7 +480,6 @@ export default {
   max-height: 120px;
 }
 
-/* Button Styles */
 .btn {
   padding: 0.875rem 1.75rem;
   border: none;
@@ -527,7 +523,6 @@ export default {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .tasks {
     padding: 1.5rem;
@@ -612,7 +607,6 @@ export default {
   }
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

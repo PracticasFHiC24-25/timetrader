@@ -80,15 +80,13 @@
 
 <script>
 import NotificationForm from '../components/NotificationForm.vue';
+import { bus } from '../main';
 
 export default {
   components: { NotificationForm },
   data() {
     return {
-      tasks: [
-        { id: 1, title: 'Estudiar para examen', priority: 'Alta', due: '2025-04-20' },
-        { id: 2, title: 'Entrega proyecto', priority: 'Media', due: '2025-04-22' },
-      ],
+      tasks: [],
       notifications: [],
       showModal: false,
       selectedNotification: null,
@@ -97,21 +95,51 @@ export default {
     };
   },
   mounted() {
+    this.loadTasks();
     this.loadNotifications();
+    // Escoltem els events globals
+    bus.on('task-added', (newTask) => {
+      const exists = this.tasks.some(task => task.id === newTask.id);
+      if (!exists) {
+        this.tasks.push(newTask);
+      }
+    });
+    bus.on('task-updated', (updatedTask) => {
+      const index = this.tasks.findIndex(task => task.id === updatedTask.id);
+      if (index !== -1) {
+        this.tasks[index] = { ...this.tasks[index], ...updatedTask };
+      }
+    });
+    bus.on('task-deleted', (taskId) => {
+      this.tasks = this.tasks.filter(task => task.id !== taskId);
+      // Opcional: Eliminar notificacions associades a la tasca eliminada
+      this.notifications = this.notifications.filter(n => n.taskId !== taskId);
+      sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
+    });
+  },
+  beforeUnmount() {
+    bus.off('task-added');
+    bus.off('task-updated');
+    bus.off('task-deleted');
   },
   methods: {
+    loadTasks() {
+      const storedTasks = JSON.parse(sessionStorage.getItem('tasks') || '[]');
+      this.tasks = storedTasks;
+    },
     loadNotifications() {
       this.notifications = JSON.parse(sessionStorage.getItem('notifications') || '[]');
     },
     saveNotification(notification) {
       this.notifications.push(notification);
+      sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
     },
     taskTitle(taskId) {
       const task = this.tasks.find(t => t.id === taskId);
-      return task ? task.title : 'Tarea desconocida';
+      return task ? task.title : 'Tasca desconeguda';
     },
     openModal(notification) {
-      this.selectedNotification = notification;
+      this.selectedNotification = { ...notification };
       this.editedHours = notification.hours;
       this.showModal = true;
     },
@@ -130,7 +158,7 @@ export default {
       this.closeModal();
     },
     openDeleteModal(notification) {
-      this.selectedNotification = notification;
+      this.selectedNotification = { ...notification };
       this.showDeleteModal = true;
     },
     closeDeleteModal() {
@@ -149,28 +177,9 @@ export default {
 </script>
 
 <style scoped>
-/* Importar fonts de Google Fonts */
+/* Estils existents (mantinguts iguals per no repetir codi) */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap');
 
-/* Comú */
-.notification-item,
-.btn,
-.edit-btn,
-.delete-btn,
-.close-btn {
-  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.notification-item:hover,
-.btn:hover,
-.edit-btn:hover,
-.delete-btn:hover,
-.close-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Estils generals */
 .notifications {
   font-family: 'Open Sans', Arial, sans-serif;
   max-width: 900px;
@@ -180,7 +189,6 @@ export default {
   min-height: 100vh;
 }
 
-/* Títols */
 .page-title {
   font-family: 'Montserrat', Arial, sans-serif;
   font-size: 2.5rem;
@@ -198,7 +206,6 @@ export default {
   margin: 2.5rem 0 1.5rem;
 }
 
-/* Card Styles */
 .card {
   background: #ffffff;
   border-radius: 12px;
@@ -212,7 +219,6 @@ export default {
   transform: translateY(-5px);
 }
 
-/* Notification List Styles */
 .notification-list {
   list-style: none;
   padding: 0;
@@ -228,6 +234,12 @@ export default {
   margin-bottom: 0.75rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   gap: 1rem;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.notification-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .notification-item span {
@@ -250,6 +262,7 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .edit-btn {
@@ -259,6 +272,8 @@ export default {
 
 .edit-btn:hover {
   background: #2B6CB0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .delete-btn {
@@ -268,6 +283,8 @@ export default {
 
 .delete-btn:hover {
   background: #C82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .edit-btn .icon,
@@ -276,7 +293,6 @@ export default {
   height: 20px;
 }
 
-/* Modal Styles */
 .modal {
   position: fixed;
   top: 0;
@@ -324,6 +340,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.close-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .close-btn svg {
@@ -337,9 +359,7 @@ export default {
 }
 
 .modal-body {
-  padding: 1.5rem
-
-;
+  padding: 1.5rem;
 }
 
 .task-label {
@@ -399,6 +419,7 @@ export default {
   cursor: pointer;
   min-width: 100px;
   text-align: center;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn-secondary {
@@ -408,6 +429,8 @@ export default {
 
 .btn-secondary:hover {
   background: #D1D5DB;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary {
@@ -417,13 +440,14 @@ export default {
 
 .btn-primary:hover {
   background: linear-gradient(90deg, #2B6CB0, #4A90E2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn:active {
   transform: scale(0.98);
 }
 
-/* Animacions */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -434,7 +458,6 @@ export default {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .notifications {
     padding: 1rem;
