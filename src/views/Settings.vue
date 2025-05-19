@@ -48,14 +48,6 @@
             v-model="settings.darkMode"
           />
         </div>
-        <div class="form-group">
-          <label for="language">Llengua preferida:</label>
-          <select id="language" v-model="settings.language">
-            <option value="ca">Català</option>
-            <option value="es">Español</option>
-            <option value="en">English</option>
-          </select>
-        </div>
         <div class="form-actions">
           <button type="submit" class="save-button">Desar Canvis</button>
         </div>
@@ -74,8 +66,7 @@ export default {
         backgroundColor: localStorage.getItem('backgroundColor') || '#f5f7fa',
         buttonColor: localStorage.getItem('buttonColor') || '#4A90E2',
         fontSize: parseInt(localStorage.getItem('fontSize')) || 16,
-        darkMode: localStorage.getItem('darkMode') === 'true',
-        language: localStorage.getItem('language') || 'ca'
+        darkMode: localStorage.getItem('darkMode') === 'true'
       },
       message: ''
     };
@@ -86,7 +77,6 @@ export default {
       localStorage.setItem('buttonColor', this.settings.buttonColor);
       localStorage.setItem('fontSize', this.settings.fontSize);
       localStorage.setItem('darkMode', this.settings.darkMode);
-      localStorage.setItem('language', this.settings.language);
 
       document.body.style.backgroundColor = this.settings.backgroundColor;
       document.querySelectorAll('.save-button').forEach(btn => {
@@ -177,13 +167,6 @@ export default {
   border-radius: 4px;
 }
 
-.form-group select {
-  padding: 5px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  width: 150px;
-}
-
 .color-preview {
   width: 25px;
   height: 25px;
@@ -234,8 +217,7 @@ body.dark-mode .form-group label {
   color: #ecf0f1;
 }
 
-body.dark-mode .form-group input[type="number"],
-body.dark-mode .form-group select {
+body.dark-mode .form-group input[type="number"] {
   background: #4a6070;
   color: #ecf0f1;
   border-color: #5d6d7e;

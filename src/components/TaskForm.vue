@@ -14,26 +14,6 @@
       <option>Mitja</option>
       <option>Baixa</option>
     </select>
-    <label>
-      <input type="checkbox" v-model="task.needsPreparation" />
-      Requiereix preparació
-    </label>
-    <div v-if="task.needsPreparation" class="slide-in">
-      <label>Hores de preparació</label>
-      <input v-model="task.preparation" type="number" min="1" />
-    </div>
-    <label>
-      <input type="checkbox" v-model="task.notify" />
-      Notificació
-    </label>
-    <div v-if="task.notify" class="slide-in">
-      <label>Hores abans</label>
-      <select v-model="task.notifyHours">
-        <option>4</option>
-        <option>24</option>
-        <option>48</option>
-      </select>
-    </div>
     <button type="submit">Guardar</button>
     <button type="button" @click="$emit('cancel')">Cancelar</button>
   </form>
@@ -51,10 +31,6 @@ export default {
         startTime: '',
         endTime: '',
         priority: 'Mitja',
-        needsPreparation: false,
-        preparation: 1,
-        notify: false,
-        notifyHours: 4,
         completed: false,
       }),
     },
@@ -68,10 +44,6 @@ export default {
         startTime: '',
         endTime: '',
         priority: 'Mitja',
-        needsPreparation: false,
-        preparation: 1,
-        notify: false,
-        notifyHours: 4,
         completed: false,
       },
     };
@@ -116,10 +88,6 @@ export default {
         startTime: '',
         endTime: '',
         priority: 'Mitja',
-        needsPreparation: false,
-        preparation: 1,
-        notify: false,
-        notifyHours: 4,
         completed: false,
       };
     },

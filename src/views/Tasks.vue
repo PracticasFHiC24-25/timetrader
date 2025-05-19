@@ -143,8 +143,6 @@ export default {
     loadTasks() {
       const storedTasks = JSON.parse(sessionStorage.getItem('tasks') || '[]');
       this.tasks = storedTasks.length > 0 ? storedTasks : [
-        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-04-20', startTime: '09:00', endTime: '12:00', completed: false },
-        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-04-22', startTime: '14:00', endTime: '16:00', completed: false },
       ];
     },
     saveTasks() {
@@ -248,9 +246,13 @@ export default {
       this.selectedTask = null;
     },
     confirmDelete() {
-      this.tasks = this.tasks.filter(t => t.id !== this.selectedTask.id);
-      this.saveTasks();
-      bus.emit('task-deleted', this.selectedTask.id); // Emetem un event per si cal actualitzar notificacions
+      const deletedTaskId = this.selectedTask.id; 
+      this.tasks = this.tasks.filter(t => t.id !== deletedTaskId); 
+      this.saveTasks(); 
+      bus.emit('task-deleted', deletedTaskId); 
+      let notifications = JSON.parse(sessionStorage.getItem('notifications') || '[]'); 
+      notifications = notifications.filter(n => n.taskId !== deletedTaskId); 
+      sessionStorage.setItem('notifications', JSON.stringify(notifications)); 
       this.closeDeleteModal();
     },
     cancelTask() {

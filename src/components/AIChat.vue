@@ -20,8 +20,9 @@ export default {
     return {
       input: '',
       messages: [
-        { text: 'Hola, com puc optimizar el teu horari?', isUser: false },
+        { text: 'Hola, com puc optimitzar el teu horari?', isUser: false },
       ],
+      tasks: JSON.parse(sessionStorage.getItem('tasks') || '[]'),
     };
   },
   methods: {
@@ -32,18 +33,68 @@ export default {
       this.messages.push({ text: response, isUser: false });
       this.input = '';
       this.$nextTick(() => {
-        this.$el.querySelector('.chat-history').scrollTop = this.$el.querySelector('.chat-history').scrollHeight;
+        const el = this.$el.querySelector('.chat-history');
+        el.scrollTop = el.scrollHeight;
       });
     },
+
     generateResponse(input) {
+      input = input.toLowerCase();
+
+      const today = new Date().toISOString().split('T')[0];
+      const tomorrowDate = new Date();
+      tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+      const tomorrow = tomorrowDate.toISOString().split('T')[0];
+
       if (input.includes('planifiquis') || input.includes('horari')) {
-        return 'Proposta: Sessió d\'estudi de 9:00 a 11:00, descans de 15min, projecte de 11:15 a 13:00. Vols afegir descansos o ajustar?';
-      } else if (input.includes('descansos')) {
-        return 'Ajustat: Sessió d\'estudi de 9:00 a 10:30, descans de 15min, projecte de 10:45 a 12:15. ¿Confirmes?';
-      } else if (input.includes('confirmes') || input.includes('implementa')) {
-        return 'Horario implementado en tu calendario.';
+        return 'Proposta: Sessió d\'estudi de 9:00 a 11:00';}
+      else if (input.includes('avui')) {
+        const tasksToday = this.tasks.filter(t => t.dueDate === today);
+        if (tasksToday.length) {
+          const titles = tasksToday.map(t => `"${t.title}"`).join(', ');
+          return `Aquestes són les teves ${tasksToday.length} tasques per avui: ${titles}. Amb quina vols començar?`;
+        } else {
+          return 'No tens cap tasca per avui.';
+        }
       }
-      return 'Siusplau, especifica la teva consulta (per exemple, "Planifica la meva setmana").';
+      else if (input.includes('demà')) {
+        const tasksTomorrow = this.tasks.filter(t => t.dueDate === tomorrow);
+        if (tasksTomorrow.length) {
+          const titles = tasksTomorrow.map(t => `"${t.title}"`).join(', ');
+          return `Demà tens ${tasksTomorrow.length} tasques: ${titles}. Vols que t’en recordi a quina hora?`;
+        } else {
+          return 'No tens cap tasca per demà.';
+        }
+      }
+      else if (input.includes('urgents') || input.includes('urgent')) {
+        const urgentTasks = this.tasks.filter(t => t.priority === 'Alta');
+        if (urgentTasks.length) {
+          const titles = urgentTasks.map(t => `"${t.title}"`).join(', ');
+          return `Tens ${urgentTasks.length} tasca(s) urgent(s): ${titles}. Vols ajornar-les o marcar-les com a completades?`;
+        } else {
+          return 'No tens cap tasca urgent.';
+        }
+      }
+      else if (input.includes('suggeriment')) {
+        if (this.tasks.length) {
+          const oldest = this.tasks.slice().sort((a, b) => a.id - b.id)[0];
+          return `La tasca més antiga pendent és “${oldest.title}” amb data de venciment ${oldest.dueDate}.`;
+        } else {
+          return 'Primer has d\'afegir alguna cosa al teu calendari.';
+        }
+      }
+      else if (input.includes('motivació')) {
+      const frases = [
+        'Anem-hi, que tu pots! 💪',
+        'Cada pas endavant et porta més a prop de la teva meta.',
+        'No deixis que els obstacles et frenin, aprèn d’ells.',
+        'Avui és la teva oportunitat per brillar amb força!'
+      ];
+      const i = Math.floor(Math.random() * frases.length);
+      return frases[i];}
+      else {
+        return 'Ho sento, no he reconegut aquesta comanda. Prova amb una comanda que contingui “avui”, “demà”, “urgents”, “suggeriment”, "hoarari" o "motivació".';
+      }
     },
   },
 };

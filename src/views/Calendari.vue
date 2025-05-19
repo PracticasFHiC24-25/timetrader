@@ -147,10 +147,7 @@ export default {
       useShortDays: false,
       hours: Array.from({ length: 16 }, (_, i) => i + 8), // De 8 a 23
       timeSlotHeight: 50,
-      tasks: [
-        { id: 1, title: 'Estudiar examen', priority: 'Alta', due: '2025-05-20', startTime: '09:00', endTime: '12:00', completed: false },
-        { id: 2, title: 'Lliurament projecte', priority: 'Mitja', due: '2025-05-22', startTime: '14:00', endTime: '16:00', completed: false },
-      ],
+      tasks: [],
     };
   },
   computed: {

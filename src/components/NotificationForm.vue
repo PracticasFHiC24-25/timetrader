@@ -10,8 +10,11 @@
     <div class="form-group">
       <label class="input-label" for="hours-select">Hores abans</label>
       <select v-model="notification.hours" id="hours-select" class="input-field">
-        <option>4</option>
-        <option>24</option>
+        <option>1</option>
+        <option>2</option> 
+        <option>4</option> 
+        <option>12</option> 
+        <option>24</option> 
         <option>48</option>
       </select>
     </div>
@@ -27,7 +30,7 @@ export default {
   props: { tasks: Array },
   data() {
     return {
-      notification: { taskId: null, hours: 4 },
+      notification: { taskId: null, hours: 1 },
     };
   },
   methods: {
