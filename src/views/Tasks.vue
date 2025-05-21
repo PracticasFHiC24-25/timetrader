@@ -174,7 +174,6 @@ export default {
     },
     submitTask(task) {
       if (!task.title || !task.due || !task.startTime || !task.endTime) {
-        alert("Si us plau, omple tots els camps obligatoris.");
         return;
       }
       const startDateTime = new Date(`${task.due}T${task.startTime}`);

@@ -80,15 +80,13 @@
 
 <script>
 import NotificationForm from '../components/NotificationForm.vue';
+import { bus } from '../main'; // Verifica que el bus esté configurado en main.js
 
 export default {
   components: { NotificationForm },
   data() {
     return {
-      tasks: [
-        { id: 1, title: 'Estudiar para examen', priority: 'Alta', due: '2025-04-20' },
-        { id: 2, title: 'Entrega proyecto', priority: 'Media', due: '2025-04-22' },
-      ],
+      tasks: [],
       notifications: [],
       showModal: false,
       selectedNotification: null,
@@ -97,7 +95,23 @@ export default {
     };
   },
   mounted() {
+    // Cargar tareas desde sessionStorage (si existen)
+    this.tasks = JSON.parse(sessionStorage.getItem('tasks') || '[]');
     this.loadNotifications();
+
+    // Escuchar evento task-added
+    bus.on('task-added', (task) => {
+      console.log('Tarea recibida en Notificacions:', task); // Depuración
+      if (!this.tasks.some(t => t.id === task.id)) {
+        this.tasks.push(task);
+        // Guardar en sessionStorage para persistencia
+        sessionStorage.setItem('tasks', JSON.stringify(this.tasks));
+        console.log('Tasks actualizados:', this.tasks); // Depuración
+      }
+    });
+  },
+  beforeDestroy() {
+    bus.off('task-added'); // Limpiar el listener
   },
   methods: {
     loadNotifications() {
@@ -105,6 +119,7 @@ export default {
     },
     saveNotification(notification) {
       this.notifications.push(notification);
+      sessionStorage.setItem('notifications', JSON.stringify(this.notifications));
     },
     taskTitle(taskId) {
       const task = this.tasks.find(t => t.id === taskId);
@@ -141,7 +156,7 @@ export default {
       let notifications = JSON.parse(sessionStorage.getItem('notifications') || '[]');
       notifications = notifications.filter(n => n.id !== this.selectedNotification.id);
       sessionStorage.setItem('notifications', JSON.stringify(notifications));
-      this.loadNotifications();
+      this.loadNotifications(); 
       this.closeDeleteModal();
     },
   },
