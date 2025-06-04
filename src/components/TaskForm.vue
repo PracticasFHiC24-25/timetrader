@@ -8,6 +8,8 @@
     <input v-model="task.startTime" type="time" required :class="{ 'error': errors.startTime }" />
     <label>Hora de finalització</label>
     <input v-model="task.endTime" type="time" required :class="{ 'error': errors.endTime }" />
+    <label>Foto (opcional)</label>
+    <input type="file" accept="image/*" @change="handlePhotoChange" :class="{ 'error': errors.photo }" />
     <label>Prioritat</label>
     <select v-model="task.priority" required>
       <option>Alta</option>
@@ -32,6 +34,7 @@ export default {
         endTime: '',
         priority: 'Mitja',
         completed: false,
+        photo: null,
       }),
     },
   },
@@ -45,12 +48,14 @@ export default {
         endTime: '',
         priority: 'Mitja',
         completed: false,
+        photo: null,
       },
       errors: {
         title: false,
         due: false,
         startTime: false,
         endTime: false,
+        photo: false,
       },
     };
   },
@@ -68,6 +73,11 @@ export default {
     },
   },
   methods: {
+    handlePhotoChange(event) {
+      const file = event.target.files[0];
+      this.task.photo = file || null;
+      this.errors.photo = false;
+    },
     submitTask() {
       // Forzar la reactividad y esperar a que los valores se actualicen
       this.$nextTick(() => {
@@ -77,6 +87,7 @@ export default {
           due: false,
           startTime: false,
           endTime: false,
+          photo: false,
         };
 
         // Depuración detallada
@@ -89,6 +100,7 @@ export default {
           dueType: typeof this.task.due,
           startTimeType: typeof this.task.startTime,
           endTimeType: typeof this.task.endTime,
+          photoType: typeof this.task.photo,
         });
 
         // Validación
@@ -143,12 +155,14 @@ export default {
         endTime: '',
         priority: 'Mitja',
         completed: false,
+        photo: null,
       };
       this.errors = {
         title: false,
         due: false,
         startTime: false,
         endTime: false,
+        photo: false,
       };
     },
   },

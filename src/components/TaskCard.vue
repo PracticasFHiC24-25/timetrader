@@ -7,6 +7,10 @@
     <p v-if="task.endTime">Hora de finalització: {{ task.endTime }}</p>
     <p v-if="task.notify">Notificació: {{ task.notifyHours }}h abans</p>
 
+    <div v-if="task.photo" class="photo-container">
+      <img :src="photoUrl" alt="Foto del recordatori" class="task-photo" />
+    </div>
+
     <div class="button-group">
       <button @click="$emit('edit', task)" class="btn btn-edit">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -33,8 +37,29 @@ export default {
   computed: {
     priorityColor() {
       return this.task.priority === 'Alta' ? '#e53e3e' :
-             this.task.priority === 'Mitja' ? '#d69e2e' : '#38a169';
+      this.task.priority === 'Mitja' ? '#d69e2e' : '#38a169';
     },
+    photoUrl() {
+      return this.task.photo ? URL.createObjectURL(this.task.photo) : '';
+    },
+    photoUrl() {
+      // Comprovar si task.photo és un objecte de fitxer vàlid
+      if (this.task.photo instanceof Blob || this.task.photo instanceof File) {
+        return URL.createObjectURL(this.task.photo);
+      }
+      // Si task.photo és una URL (cadena), retornar-la directament
+      if (typeof this.task.photo === 'string' && this.task.photo.startsWith('http')) {
+        return this.task.photo;
+      }
+      // Retornar null si no hi ha foto vàlida
+      return null;
+    },
+  },
+    beforeUnmount() {
+    // Alliberar la URL de l'objecte quan el component es destrueixi
+    if (this.task.photo) {
+      URL.revokeObjectURL(this.photoUrl);
+    }
   },
 };
 </script>
@@ -57,12 +82,13 @@ h3 {
   font-weight: 600;
   color: #1a202c;
   margin: 0 0 0.75rem;
+  text-align: center;
 }
 
 p {
   font-size: 0.95rem;
   color: #4a5568;
-  margin: 0.5rem 0;
+  margin: 0.4rem 0;
 }
 
 .button-group {
@@ -71,6 +97,18 @@ p {
   margin-top: 1rem;
   justify-content: flex-end;
   align-items: center;
+}
+
+.photo-container {
+  margin: 1rem 0;
+}
+
+.task-photo {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
 }
 
 .btn {

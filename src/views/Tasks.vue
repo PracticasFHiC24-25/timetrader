@@ -106,6 +106,7 @@ export default {
         notify: false,
         notifyHours: 4,
         completed: false,
+        photo: null,
       },
       editedTask: {
         id: null,
@@ -119,6 +120,7 @@ export default {
         notify: false,
         notifyHours: 4,
         completed: false,
+        photo: null,
       },
     };
   },
@@ -140,13 +142,48 @@ export default {
     this.loadTasks();
   },
   methods: {
-    loadTasks() {
+   async loadTasks() {
       const storedTasks = JSON.parse(sessionStorage.getItem('tasks') || '[]');
-      this.tasks = storedTasks.length > 0 ? storedTasks : [
-      ];
+      this.tasks = await Promise.all(
+        storedTasks.map(async (task) => {
+          if (task.photoBase64) {
+            try {
+              const response = await fetch(task.photoBase64);
+              const blob = await response.blob();
+              return { ...task, photo: blob, photoBase64: task.photoBase64 };
+            } catch (error) {
+              console.error('Error convertint Base64 a Blob:', error);
+              return { ...task, photo: null };
+            }
+          }
+          return task;
+        })
+      );
     },
-    saveTasks() {
-      sessionStorage.setItem('tasks', JSON.stringify(this.tasks));
+    async saveTasks() {
+      const tasksToSave = await Promise.all(
+        this.tasks.map(async (task) => {
+          if (task.photo instanceof Blob || task.photo instanceof File) {
+            try {
+              const base64 = await this.fileToBase64(task.photo);
+              return { ...task, photoBase64: base64, photo: null };
+            } catch (error) {
+              console.error('Error convertint fitxer a Base64:', error);
+              return { ...task, photo: null };
+            }
+          }
+          return task;
+        })
+      );
+      sessionStorage.setItem('tasks', JSON.stringify(tasksToSave));
+    },
+    fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
     },
     addTask(task) {
       const newTask = { ...task, id: this.tasks.length ? Math.max(...this.tasks.map(t => t.id)) + 1 : 1 };
@@ -166,6 +203,7 @@ export default {
         notify: false,
         notifyHours: 4,
         completed: false,
+        photo: null,
       };
       this.showTaskModal = true;
     },
@@ -197,6 +235,7 @@ export default {
         notify: false,
         notifyHours: 4,
         completed: false,
+        photo: null,
       };
     },
     openEditModal(task) {
@@ -219,6 +258,7 @@ export default {
         notify: false,
         notifyHours: 4,
         completed: false,
+        photo: null,
       };
     },
     saveEditedTask(task) {
